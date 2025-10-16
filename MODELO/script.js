@@ -2,7 +2,7 @@ function iniciarSesion() {
   const correo = document.getElementById("usuario").value.trim();
   const contrasena = document.getElementById("contrasena").value.trim();
 
-  fetch("alumnos.csv")
+  fetch("usuarios.csv")
     .then(response => {
       if (!response.ok) throw new Error("Error leyendo CSV");
       return response.text();

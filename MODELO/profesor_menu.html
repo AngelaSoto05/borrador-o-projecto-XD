@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Profesor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f3f6fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #004e98;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #e0e7ef;
+            padding: 10px;
+        }
+        nav a {
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            margin: 10px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        nav a:hover {
+            background-color: #0056b3;
+        }
+        section {
+            padding: 25px;
+            text-align: center;
+        }
+        footer {
+            background-color: #004e98;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .info {
+            font-size: 1rem;
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Panel del Profesor</h1>
+    <p class="info">Bienvenido, <strong>Profesor(a)</strong> | IP registrada: <span id="ip">Cargando...</span></p>
+</header>
+
+<nav>
+    <a href="profesor_asistencia.html">📋 Registrar Asistencia</a>
+    <a href="profesor_horario.html">📅 Ver Horario</a>
+    <a href="profesor_aulas.html">🏫 Disponibilidad de Aulas</a>
+    <a href="profesor_notas.html">🧮 Gestión de Notas</a>
+    <a href="profesor_contenido.html">📘 Contenido del Curso</a>
+    <a href="profesor_reportes.html">📑 Reportes PDF</a>
+</nav>
+
+<section>
+    <h2>Seleccione una opción del menú para continuar</h2>
+    <p class="info">Recuerde que su asistencia se registra automáticamente al iniciar sesión.</p>
+</section>
+
+<footer>
+    Universidad Nacional de San Agustín - Sistema de Control Docente © 2025
+</footer>
+
+<script>
+    // Mostrar IP simulada del profesor
+    document.getElementById('ip').textContent = "192.168.1.45 (Presencial)";
+</script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reportes del Profesor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background-color: #f3f6fa; text-align: center; margin: 0; }
+  header { background-color: #004e98; color: white; padding: 20px; }
+  table {
+    width: 90%; margin: 20px auto; border-collapse: collapse;
+    background-color: white; box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+  th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+  th { background-color: #004e98; color: white; }
+  button {
+    background-color: #007bff; color: white;
+    padding: 12px 20px; border: none; border-radius: 10px;
+    cursor: pointer; margin-top: 20px; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Reportes del Curso</h1>
+  <p>Profesor: <strong>Juan Pérez</strong></p>
+</header>
+
+<main>
+  <h2>Resumen de Notas</h2>
+  <table>
+    <tr><th>Alumno</th><th>Promedio</th><th>Estado</th></tr>
+    <tr><td>María Soto</td><td>15.2</td><td>Aprobado</td></tr>
+    <tr><td>Pedro Torres</td><td>12.1</td><td>Desaprobado</td></tr>
+    <tr><td>Carla Jiménez</td><td>17.3</td><td>Aprobado</td></tr>
+  </table>
+
+  <button onclick="descargarPDF()">📄 Descargar Reporte PDF</button>
+</main>
+
+<script>
+function descargarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text("Reporte de Notas - Profesor Juan Pérez", 20, 20);
+  doc.text("Curso: Algoritmos y Estructuras", 20, 30);
+  doc.text("Fecha: " + new Date().toLocaleDateString(), 20, 40);
+  doc.text("────────────────────────────", 20, 45);
+  doc.text("Alumnos:", 20, 55);
+  doc.text("1. María Soto - 15.2 (Aprobado)", 20, 65);
+  doc.text("2. Pedro Torres - 12.1 (Desaprobado)", 20, 75);
+  doc.text("3. Carla Jiménez - 17.3 (Aprobado)", 20, 85);
+  doc.save("Reporte_Notas.pdf");
+}
+</script>
+</body>
+</html>

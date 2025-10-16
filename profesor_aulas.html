@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Gestión de Aulas y Laboratorios</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background-color: #f2f7fb; }
+  header { background-color: #004e98; color: white; padding: 20px; text-align: center; }
+  main { padding: 30px; text-align: center; }
+  table { width: 80%; margin: 0 auto; border-collapse: collapse; background: white; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+  th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: center; }
+  th { background-color: #004e98; color: white; }
+  button {
+    padding: 8px 14px; border: none; border-radius: 6px;
+    cursor: pointer; font-weight: 600; color: white;
+  }
+  .ocupado { background-color: gray; cursor: not-allowed; }
+  .libre { background-color: #28a745; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Disponibilidad de Aulas y Laboratorios</h1>
+</header>
+
+<main>
+  <table>
+    <tr><th>Nombre</th><th>Tipo</th><th>Estado</th><th>Acción</th></tr>
+    <tr><td>Aula 101</td><td>Teoría</td><td>Libre</td><td><button class="libre" onclick="reservar(this)">Reservar</button></td></tr>
+    <tr><td>Aula 102</td><td>Teoría</td><td>Ocupado</td><td><button class="ocupado" disabled>Ocupado</button></td></tr>
+    <tr><td>Lab A1</td><td>Laboratorio</td><td>Libre</td><td><button class="libre" onclick="reservar(this)">Reservar</button></td></tr>
+    <tr><td>Lab A2</td><td>Laboratorio</td><td>Ocupado</td><td><button class="ocupado" disabled>Ocupado</button></td></tr>
+  </table>
+</main>
+
+<script>
+function reservar(btn) {
+  btn.textContent = "Ocupado";
+  btn.className = "ocupado";
+  btn.disabled = true;
+  alert("Aula reservada correctamente (HU 2.3.2)");
+}
+</script>
+</body>
+</html>

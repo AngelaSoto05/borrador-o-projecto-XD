@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencia del Profesor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f3f6fa;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #004e98;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            padding: 30px;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #004e98;
+            color: white;
+        }
+        select {
+            padding: 5px;
+        }
+        .info {
+            color: #555;
+            margin-top: 15px;
+        }
+        .boton {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        .boton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Registro de Asistencia</h1>
+    <p>Profesor: <strong>Juan Pérez</strong> | IP: <span id="ip">Cargando...</span></p>
+</header>
+
+<main>
+    <h2>Lista de Estudiantes</h2>
+
+    <table>
+        <tr>
+            <th>Estudiante</th>
+            <th>Estado</th>
+        </tr>
+        <tr>
+            <td>María Soto</td>
+            <td>
+                <select>
+                    <option>Presente</option>
+                    <option>Falta</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Pedro Torres</td>
+            <td>
+                <select>
+                    <option>Presente</option>
+                    <option>Falta</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Carla Jiménez</td>
+            <td>
+                <select>
+                    <option>Presente</option>
+                    <option>Falta</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <button class="boton" onclick="registrarAsistencia()">Guardar Asistencia</button>
+
+    <p class="info">Tiempo restante para registrar asistencia: <span id="contador">15:00</span> minutos.</p>
+</main>
+
+<script>
+    // Simular IP
+    document.getElementById('ip').textContent = "192.168.1.45 (Presencial)";
+
+    // Contador regresivo de 15 minutos
+    let tiempo = 15 * 60; 
+    const contador = document.getElementById('contador');
+    const timer = setInterval(() => {
+        let min = Math.floor(tiempo / 60);
+        let seg = tiempo % 60;
+        contador.textContent = `${min}:${seg < 10 ? '0' + seg : seg}`;
+        tiempo--;
+        if (tiempo < 0) {
+            clearInterval(timer);
+            alert("Tiempo de registro finalizado.");
+        }
+    }, 1000);
+
+    function registrarAsistencia() {
+        alert("Asistencia registrada correctamente (HU 3.1.1)");
+    }
+</script>
+
+</body>
+</html>

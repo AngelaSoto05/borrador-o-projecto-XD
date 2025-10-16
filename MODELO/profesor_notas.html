@@ -1,133 +1,131 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro de Notas</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Notas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #004e98;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        main {
+            padding: 30px;
+            text-align: center;
+        }
+        .boton {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: 600;
+        }
+        .boton:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #004e98;
+            color: white;
+        }
+        input[type="number"] {
+            width: 70px;
+            padding: 5px;
+        }
+        canvas {
+            margin-top: 30px;
+        }
+    </style>
 </head>
 <body>
-  <div class="panel">
-    <h2>Registro de Notas</h2>
-    <h3 id="cursoSeleccionado"></h3>
 
-    <table border="1" style="width:100%; text-align:center;">
-      <thead>
+<header>
+    <h1>Gestión de Notas - Profesor</h1>
+</header>
+
+<main>
+    <button class="boton" onclick="importarNotas()">📂 Importar desde Excel</button>
+    <button class="boton" onclick="generarReporte()">📄 Descargar Reporte PDF</button>
+
+    <table id="tablaNotas">
         <tr>
-          <th>Alumno</th>
-          <th>Cont. 1</th>
-          <th>Parcial 1</th>
-          <th>Cont. 2</th>
-          <th>Parcial 2</th>
-          <th>Cont. 3</th>
-          <th>Final</th>
-          <th>Promedio</th>
-          <th>Estado</th>
+            <th>Estudiante</th>
+            <th>Nota</th>
+            <th>Estado</th>
         </tr>
-      </thead>
-      <tbody id="tablaNotas"></tbody>
+        <tr>
+            <td>Juan Pérez</td>
+            <td><input type="number" min="0" max="20" value="14" onchange="actualizarGrafico()"></td>
+            <td>Aprobado</td>
+        </tr>
+        <tr>
+            <td>María Soto</td>
+            <td><input type="number" min="0" max="20" value="8" onchange="actualizarGrafico()"></td>
+            <td>Desaprobado</td>
+        </tr>
+        <tr>
+            <td>Pedro Torres</td>
+            <td><input type="number" min="0" max="20" value="18" onchange="actualizarGrafico()"></td>
+            <td>Aprobado</td>
+        </tr>
     </table>
 
-    <br>
-    <button onclick="guardarNotas()">💾 Guardar Notas</button>
-    <button onclick="volver()">⬅️ Volver al panel</button>
-  </div>
+    <canvas id="graficoNotas" width="400" height="200"></canvas>
+</main>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Mostrar el curso seleccionado desde localStorage
-      const curso = localStorage.getItem("cursoSeleccionado");
-      document.getElementById("cursoSeleccionado").innerText = "Curso: " + (curso || "No especificado");
-
-      // Cargar los nombres de alumnos desde el archivo CSV
-      fetch("notas.csv")
-        .then(response => response.text())
-        .then(data => {
-          const lineas = data.trim().split("\n").slice(1); // Saltar la cabecera
-          const tbody = document.getElementById("tablaNotas");
-
-          lineas.forEach(linea => {
-            const columnas = linea.split(",");
-            const alumno = columnas[0].trim(); // Nombre del alumno
-
-            const fila = document.createElement("tr");
-
-            // Columna nombre
-            const tdNombre = document.createElement("td");
-            tdNombre.textContent = alumno;
-            fila.appendChild(tdNombre);
-
-            // Crear 6 inputs para notas
-            for (let i = 0; i < 6; i++) {
-              const td = document.createElement("td");
-              const input = document.createElement("input");
-              input.type = "number";
-              input.min = "0";
-              input.max = "20";
-              input.value = "";
-              input.addEventListener("input", calcularPromedios);
-              td.appendChild(input);
-              fila.appendChild(td);
-            }
-
-            // Promedio
-            const tdPromedio = document.createElement("td");
-            tdPromedio.classList.add("promedio");
-            tdPromedio.textContent = "0";
-            fila.appendChild(tdPromedio);
-
-            // Estado
-            const tdEstado = document.createElement("td");
-            tdEstado.classList.add("estado");
-            tdEstado.textContent = "---";
-            fila.appendChild(tdEstado);
-
-            tbody.appendChild(fila);
-          });
-        })
-        .catch(err => {
-          console.error("Error al cargar el CSV:", err);
-          alert("No se pudo cargar el archivo notas.csv");
-        });
+<script>
+    // Gráfico inicial
+    let ctx = document.getElementById('graficoNotas').getContext('2d');
+    let grafico = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Juan', 'María', 'Pedro'],
+            datasets: [{
+                label: 'Notas',
+                data: [14, 8, 18],
+            }]
+        },
     });
 
-    // Calcular promedios automáticamente
-    function calcularPromedios() {
-      const filas = document.querySelectorAll("#tablaNotas tr");
-      filas.forEach(fila => {
-        const notas = Array.from(fila.querySelectorAll("input")).map(i => parseFloat(i.value) || 0);
-        const promedio = (notas.reduce((a,b)=>a+b,0) / notas.length).toFixed(2);
-        const promElem = fila.querySelector(".promedio");
-        const estadoElem = fila.querySelector(".estado");
-        promElem.textContent = promedio;
-        estadoElem.textContent = promedio >= 13 ? "Aprobado" : "Desaprobado";
-        estadoElem.style.color = promedio >= 13 ? "green" : "red";
-      });
+    function actualizarGrafico() {
+        let notas = Array.from(document.querySelectorAll('input[type="number"]')).map(x => Number(x.value));
+        grafico.data.datasets[0].data = notas;
+        grafico.update();
     }
 
-    // Guardar notas en un nuevo CSV descargable
-    function guardarNotas() {
-      const filas = document.querySelectorAll("#tablaNotas tr");
-      let csv = "Alumno,Cont1,Parcial1,Cont2,Parcial2,Cont3,Final,Promedio,Estado\n";
-
-      filas.forEach(fila => {
-        const alumno = fila.cells[0].innerText;
-        const notas = Array.from(fila.querySelectorAll("input")).map(i => i.value);
-        const promedio = fila.querySelector(".promedio").textContent;
-        const estado = fila.querySelector(".estado").textContent;
-        csv += `${[alumno, ...notas, promedio, estado].join(",")}\n`;
-      });
-
-      const blob = new Blob([csv], { type: "text/csv" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "notas_actualizadas.csv";
-      a.click();
-      alert("Notas guardadas correctamente.");
+    function importarNotas() {
+        alert('Función de importación desde Excel (HU 4.1.1) — en desarrollo');
     }
 
-    function volver() {
-      window.location.href = "profesor.html";
+    function generarReporte() {
+        alert('Generando reporte en PDF con asistencia y notas (HU 6.1.1)');
     }
-  </script>
+</script>
+
 </body>
 </html>
