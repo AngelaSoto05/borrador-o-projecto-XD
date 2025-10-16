@@ -24,30 +24,7 @@
           <th>Estado</th>
         </tr>
       </thead>
-      <tbody id="tablaNotas">
-        <tr>
-          <td>Ángela Soto Huerta</td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0" oninput="calcularPromedios()"></td>
-          <td class="promedio">0</td>
-          <td class="estado">---</td>
-        </tr>
-        <tr>
-          <td>Katherin Zenayuca</td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0"></td>
-          <td><input type="number" min="0" max="20" value="0" oninput="calcularPromedios()"></td>
-          <td class="promedio">0</td>
-          <td class="estado">---</td>
-        </tr>
-      </tbody>
+      <tbody id="tablaNotas"></tbody>
     </table>
 
     <br>
@@ -57,10 +34,63 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      // Mostrar el curso seleccionado desde localStorage
       const curso = localStorage.getItem("cursoSeleccionado");
-      document.getElementById("cursoSeleccionado").innerText = "Curso: " + curso;
+      document.getElementById("cursoSeleccionado").innerText = "Curso: " + (curso || "No especificado");
+
+      // Cargar los nombres de alumnos desde el archivo CSV
+      fetch("notas.csv")
+        .then(response => response.text())
+        .then(data => {
+          const lineas = data.trim().split("\n").slice(1); // Saltar la cabecera
+          const tbody = document.getElementById("tablaNotas");
+
+          lineas.forEach(linea => {
+            const columnas = linea.split(",");
+            const alumno = columnas[0].trim(); // Nombre del alumno
+
+            const fila = document.createElement("tr");
+
+            // Columna nombre
+            const tdNombre = document.createElement("td");
+            tdNombre.textContent = alumno;
+            fila.appendChild(tdNombre);
+
+            // Crear 6 inputs para notas
+            for (let i = 0; i < 6; i++) {
+              const td = document.createElement("td");
+              const input = document.createElement("input");
+              input.type = "number";
+              input.min = "0";
+              input.max = "20";
+              input.value = "";
+              input.addEventListener("input", calcularPromedios);
+              td.appendChild(input);
+              fila.appendChild(td);
+            }
+
+            // Promedio
+            const tdPromedio = document.createElement("td");
+            tdPromedio.classList.add("promedio");
+            tdPromedio.textContent = "0";
+            fila.appendChild(tdPromedio);
+
+            // Estado
+            const tdEstado = document.createElement("td");
+            tdEstado.classList.add("estado");
+            tdEstado.textContent = "---";
+            fila.appendChild(tdEstado);
+
+            tbody.appendChild(fila);
+          });
+        })
+        .catch(err => {
+          console.error("Error al cargar el CSV:", err);
+          alert("No se pudo cargar el archivo notas.csv");
+        });
     });
 
+    // Calcular promedios automáticamente
     function calcularPromedios() {
       const filas = document.querySelectorAll("#tablaNotas tr");
       filas.forEach(fila => {
@@ -74,20 +104,23 @@
       });
     }
 
+    // Guardar notas en un nuevo CSV descargable
     function guardarNotas() {
       const filas = document.querySelectorAll("#tablaNotas tr");
       let csv = "Alumno,Cont1,Parcial1,Cont2,Parcial2,Cont3,Final,Promedio,Estado\n";
+
       filas.forEach(fila => {
-        const datos = [fila.cells[0].innerText];
+        const alumno = fila.cells[0].innerText;
         const notas = Array.from(fila.querySelectorAll("input")).map(i => i.value);
         const promedio = fila.querySelector(".promedio").textContent;
         const estado = fila.querySelector(".estado").textContent;
-        csv += `${datos.concat(notas, promedio, estado).join(",")}\n`;
+        csv += `${[alumno, ...notas, promedio, estado].join(",")}\n`;
       });
+
       const blob = new Blob([csv], { type: "text/csv" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "notas.csv";
+      a.download = "notas_actualizadas.csv";
       a.click();
       alert("Notas guardadas correctamente.");
     }
