@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Notas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="panel">
+    <h2>Registro de Notas</h2>
+    <h3 id="cursoSeleccionado"></h3>
+
+    <table border="1" style="width:100%; text-align:center;">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Cont. 1</th>
+          <th>Parcial 1</th>
+          <th>Cont. 2</th>
+          <th>Parcial 2</th>
+          <th>Cont. 3</th>
+          <th>Final</th>
+          <th>Promedio</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tablaNotas">
+        <tr>
+          <td>Ángela Soto Huerta</td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0" oninput="calcularPromedios()"></td>
+          <td class="promedio">0</td>
+          <td class="estado">---</td>
+        </tr>
+        <tr>
+          <td>Katherin Zenayuca</td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0"></td>
+          <td><input type="number" min="0" max="20" value="0" oninput="calcularPromedios()"></td>
+          <td class="promedio">0</td>
+          <td class="estado">---</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <button onclick="guardarNotas()">💾 Guardar Notas</button>
+    <button onclick="volver()">⬅️ Volver al panel</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const curso = localStorage.getItem("cursoSeleccionado");
+      document.getElementById("cursoSeleccionado").innerText = "Curso: " + curso;
+    });
+
+    function calcularPromedios() {
+      const filas = document.querySelectorAll("#tablaNotas tr");
+      filas.forEach(fila => {
+        const notas = Array.from(fila.querySelectorAll("input")).map(i => parseFloat(i.value) || 0);
+        const promedio = (notas.reduce((a,b)=>a+b,0) / notas.length).toFixed(2);
+        const promElem = fila.querySelector(".promedio");
+        const estadoElem = fila.querySelector(".estado");
+        promElem.textContent = promedio;
+        estadoElem.textContent = promedio >= 13 ? "Aprobado" : "Desaprobado";
+        estadoElem.style.color = promedio >= 13 ? "green" : "red";
+      });
+    }
+
+    function guardarNotas() {
+      const filas = document.querySelectorAll("#tablaNotas tr");
+      let csv = "Alumno,Cont1,Parcial1,Cont2,Parcial2,Cont3,Final,Promedio,Estado\n";
+      filas.forEach(fila => {
+        const datos = [fila.cells[0].innerText];
+        const notas = Array.from(fila.querySelectorAll("input")).map(i => i.value);
+        const promedio = fila.querySelector(".promedio").textContent;
+        const estado = fila.querySelector(".estado").textContent;
+        csv += `${datos.concat(notas, promedio, estado).join(",")}\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "notas.csv";
+      a.click();
+      alert("Notas guardadas correctamente.");
+    }
+
+    function volver() {
+      window.location.href = "profesor.html";
+    }
+  </script>
+</body>
+</html>

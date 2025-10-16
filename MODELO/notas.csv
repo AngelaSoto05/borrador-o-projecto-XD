@@ -1,4 +1,6 @@
-CUI,Curso,Nota
-20212163,Programación 1,17
-20212163,Estructuras Discretas,15
-20212164,Programación 1,12
+Alumno,Cont1,Parcial1,Cont2,Parcial2,Cont3,Final,Promedio,Estado
+Ángela Soto Huerta,14,15,13,14,15,16,14.5,Aprobado
+Katherin Zenayuca,11,12,13,10,11,12,11.5,Desaprobado
+
+
+
