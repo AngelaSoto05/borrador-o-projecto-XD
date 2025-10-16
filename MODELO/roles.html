@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seleccionar Rol</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="roles-container">
+    <h2>Seleccione su tipo de usuario</h2>
+    <div class="roles-grid">
+      <div class="rol" onclick="abrir('admin')">
+        <img src="img/admin.png" alt="Administrador">
+        <p>Administrador</p>
+      </div>
+      <div class="rol" onclick="abrir('secretaria')">
+        <img src="img/secretaria.png" alt="Secretaria">
+        <p>Secretaria</p>
+      </div>
+      <div class="rol" onclick="abrir('profesor')">
+        <img src="img/profesor.png" alt="Profesor">
+        <p>Profesor</p>
+      </div>
+      <div class="rol" onclick="abrir('estudiante')">
+        <img src="img/estudiante.png" alt="Estudiante">
+        <p>Estudiante</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrir(rol) {
+      switch (rol) {
+        case 'admin': window.location.href = "admin.html"; break;
+        case 'secretaria': window.location.href = "secretaria.html"; break;
+        case 'profesor': window.location.href = "profesor.html"; break;
+        case 'estudiante': window.location.href = "estudiante.html"; break;
+      }
+    }
+  </script>
+</body>
+</html>

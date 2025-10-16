@@ -1,58 +1,32 @@
-// ---- LOGIN ----
-const loginForm = document.getElementById("loginForm");
-if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+function iniciarSesion() {
+  const correo = document.getElementById("usuario").value.trim();
+  const contrasena = document.getElementById("contrasena").value.trim();
 
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const message = document.getElementById("message");
+  fetch("alumnos.csv")
+    .then(response => {
+      if (!response.ok) throw new Error("Error leyendo CSV");
+      return response.text();
+    })
+    .then(data => {
+      const lineas = data.split("\n").map(l => l.trim()).filter(l => l);
+      let encontrado = false;
 
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-
-        const found = users.find(u => u.username === username && u.password === password);
-
-        if (found) {
-            localStorage.setItem("loggedUser", username);
-            message.style.color = "green";
-            message.textContent = "Inicio de sesión exitoso ✅";
-            setTimeout(() => window.location.href = "dashboard.html", 1000);
-        } else {
-            message.style.color = "red";
-            message.textContent = "Usuario o contraseña incorrectos.";
+      for (let i = 0; i < lineas.length; i++) {
+        const [email, pass, rol] = lineas[i].split(",");
+        if (email === correo && pass === contrasena) {
+          encontrado = true;
+          localStorage.setItem("rol", rol);
+          localStorage.setItem("usuario", email);
+          window.location.href = "roles.html";
+          break;
         }
-    });
-}
+      }
 
-// ---- REGISTRO ----
-const registerForm = document.getElementById("registerForm");
-if (registerForm) {
-    registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const username = document.getElementById("newUsername").value.trim();
-        const password = document.getElementById("newPassword").value.trim();
-        const message = document.getElementById("message");
-
-        if (username === "" || password === "") {
-            message.style.color = "red";
-            message.textContent = "Por favor completa todos los campos.";
-            return;
-        }
-
-        let users = JSON.parse(localStorage.getItem("users")) || [];
-
-        if (users.some(u => u.username === username)) {
-            message.style.color = "red";
-            message.textContent = "El usuario ya existe.";
-            return;
-        }
-
-        users.push({ username, password });
-        localStorage.setItem("users", JSON.stringify(users));
-
-        message.style.color = "green";
-        message.textContent = "Registro exitoso ✅";
-        setTimeout(() => window.location.href = "index.html", 1000);
+      if (!encontrado) {
+        alert("⚠️ Usuario o contraseña incorrectos");
+      }
+    })
+    .catch(() => {
+      alert("❌ Error al leer alumnos.csv — usa Live Server para abrir la página.");
     });
 }

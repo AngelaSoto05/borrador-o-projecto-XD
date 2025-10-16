@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Profesor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <script>
+        // --- Geolocalización del profesor ---
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mostrarPosicion, mostrarError);
+            } else {
+                alert("La geolocalización no está soportada por este navegador.");
+            }
+        }
+
+        function mostrarPosicion(pos) {
+            document.getElementById("latitud").value = pos.coords.latitude;
+            document.getElementById("longitud").value = pos.coords.longitude;
+            document.getElementById("ubicacion").innerText = 
+                "Ubicación detectada ✅ (" + pos.coords.latitude.toFixed(4) + ", " + pos.coords.longitude.toFixed(4) + ")";
+        }
+
+        function mostrarError(error) {
+            alert("Error al obtener ubicación: " + error.message);
+        }
+
+        // --- Temporizador 15 minutos ---
+        function iniciarTemporizador() {
+            let tiempoRestante = 15 * 60; // 15 minutos
+            const temporizador = setInterval(() => {
+                const min = Math.floor(tiempoRestante / 60);
+                const seg = tiempoRestante % 60;
+                document.getElementById("temporizador").innerText = 
+                    `Tiempo restante: ${min}:${seg < 10 ? '0' + seg : seg}`;
+                tiempoRestante--;
+                if (tiempoRestante < 0) {
+                    clearInterval(temporizador);
+                    document.getElementById("temporizador").innerText = "Tiempo agotado ⛔";
+                    document.getElementById("btnGuardar").disabled = true;
+                }
+            }, 1000);
+        }
+
+        // --- Guardar notas ---
+        function guardarNotas() {
+            alert("Notas guardadas correctamente ✅");
+        }
+
+        window.onload = function() {
+            obtenerUbicacion();
+            iniciarTemporizador();
+        }
+    </script>
+</head>
+<body class="bg-light">
+    <div class="container p-4">
+        <h2 class="text-center mb-3">Panel del Profesor</h2>
+        <p id="ubicacion" class="text-success fw-bold"></p>
+        <p id="temporizador" class="text-danger fw-bold"></p>
+
+        <!-- Formulario de registro de notas -->
+        <div class="card shadow p-4">
+            <h4>Registro de Notas - Laboratorio de Computación</h4>
+            <form id="formNotas" class="mt-3">
+                <input type="hidden" id="latitud">
+                <input type="hidden" id="longitud">
+
+                <div class="mb-3">
+                    <label for="alumno" class="form-label">Nombre del Alumno</label>
+                    <input type="text" id="alumno" class="form-control" placeholder="Ej: Angela Soto Huerta" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2"><input type="number" step="0.01" class="form-control" placeholder="Continua 1"></div>
+                    <div class="col-md-2"><input type="number" step="0.01" class="form-control" placeholder="Parcial 1"></div>
+                    <div class="col-md-2"><input type="number" step="0.01" class="form-control" placeholder="Continua 2"></div>
+                    <div class="col-md-2"><input type="number" step="0.01" class="form-control" placeholder="Parcial 2"></div>
+                    <div class="col-md-2"><input type="number" step="0.01" class="form-control" placeholder="Continua 3"></div>
+                    <div class="col-md-2"><input type="number" step="0.01" class="form-control" placeholder="Final"></div>
+                </div>
+
+                <div class="text-end mt-3">
+                    <button type="button" id="btnGuardar" onclick="guardarNotas()" class="btn btn-primary">Guardar Notas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel del Administrador</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>⚙️ Panel del Administrador</h2>
+  <p>Bienvenido(a), <span id="nombre"></span></p>
+
+  <ul>
+    <li>👤 Añadir / Modificar / Eliminar usuarios</li>
+    <li>📚 Gestionar cursos y laboratorios</li>
+    <li>🕒 Revisar asistencia de profesores</li>
+  </ul>
+
+  <script>
+    document.getElementById('nombre').textContent = localStorage.getItem("usuarioActual");
+  </script>
+</body>
+</html>
