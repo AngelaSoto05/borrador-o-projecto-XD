@@ -1,102 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Notas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f7f9fb;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #004e98;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            margin: 0;
-        }
-        main {
-            padding: 30px;
-            text-align: center;
-        }
-        .boton {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 10px;
-            font-weight: 600;
-        }
-        .boton:hover {
-            background-color: #0056b3;
-        }
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #004e98;
-            color: white;
-        }
-        input[type="number"] {
-            width: 70px;
-            padding: 5px;
-        }
-        canvas {
-            margin-top: 30px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Notas - Profesor</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9ff;
+      padding: 20px;
+    }
+    header h1 { color: #2b3d99; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 8px;
+    }
+    th { background-color: #e4e6fa; }
+    input[type="number"] {
+      width: 60px;
+      text-align: center;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 15px;
+      border: none;
+      background-color: #2b3d99;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1a2870;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>✏️ Ingreso y Edición de Notas</h1>
+    <button onclick="volver()">⬅ Volver al menú</button>
+  </header>
 
-<header>
-    <h1>Gestión de Notas - Profesor</h1>
-</header>
-
-<main>
-    <button class="boton" onclick="importarNotas()">📂 Importar desde Excel</button>
-    <button class="boton" onclick="generarReporte()">📄 Descargar Reporte PDF</button>
-
-    <table id="tablaNotas">
-        <tr>
-            <th>Estudiante</th>
-            <th>Nota</th>
+  <main>
+    <section>
+      <h2>Notas de los Estudiantes</h2>
+      <table id="tablaNotas">
+        <thead>
+          <tr>
+            <th>Alumno</th>
+            <th>Cont1</th>
+            <th>Parcial1</th>
+            <th>Cont2</th>
+            <th>Parcial2</th>
+            <th>Cont3</th>
+            <th>Final</th>
+            <th>Promedio</th>
             <th>Estado</th>
-        </tr>
-        <tr>
-            <td>Juan Pérez</td>
-            <td><input type="number" min="0" max="20" value="14" onchange="actualizarGrafico()"></td>
-            <td>Aprobado</td>
-        </tr>
-        <tr>
-            <td>María Soto</td>
-            <td><input type="number" min="0" max="20" value="8" onchange="actualizarGrafico()"></td>
-            <td>Desaprobado</td>
-        </tr>
-        <tr>
-            <td>Pedro Torres</td>
-            <td><input type="number" min="0" max="20" value="18" onchange="actualizarGrafico()"></td>
-            <td>Aprobado</td>
-        </tr>
-    </table>
+          </tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+      </table>
+      <br>
+      <button onclick="guardarNotas()">💾 Guardar Cambios</button>
+    </section>
+  </main>
 
-    <canvas id="graficoNotas" width="400" height="200"></canvas>
-</main>
+  <footer>
+    <p>Universidad Nacional - Sistema de Notas © 2025</p>
+  </footer>
+
+  <script>
+    function volver() {
+      window.location.href = "profesor.html";
+    }
+
+    // Leer CSV desde el archivo local
+    async function cargarCSV() {
+      const response = await fetch('notas.csv');
+      const data = await response.text();
+      const filas = data.trim().split('\n').slice(1); // omitir cabecera
+      const tbody = document.getElementById('tablaBody');
+      tbody.innerHTML = "";
+
+      filas.forEach(linea => {
+        const [alumno, c1, p1, c2, p2, c3, fin, prom, estado] = linea.split(',');
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${alumno}</td>
+          <td><input type="number" min="0" max="20" value="${c1}"></td>
+          <td><input type="number" min="0" max="20" value="${p1}"></td>
+          <td><input type="number" min="0" max="20" value="${c2}"></td>
+          <td><input type="number" min="0" max="20" value="${p2}"></td>
+          <td><input type="number" min="0" max="20" value="${c3}"></td>
+          <td><input type="number" min="0" max="20" value="${fin}"></td>
+          <td><span>${prom}</span></td>
+          <td><span>${estado}</span></td>
+        `;
+        tbody.appendChild(fila);
+      });
+    }
+
+    function guardarNotas() {
+      const filas = document.querySelectorAll("#tablaBody tr");
+      filas.forEach(fila => {
+        const inputs = fila.querySelectorAll("input");
+        let suma = 0;
+        let count = 0;
+        inputs.forEach(inp => {
+          const val = parseFloat(inp.value);
+          if (!isNaN(val)) {
+            suma += val;
+            count++;
+          }
+        });
+        const promedio = count > 0 ? (suma / count).toFixed(2) : "-";
+        const estado = promedio >= 11 ? "Aprobado" : "Desaprobado";
+        fila.querySelectorAll("span")[0].textContent = promedio;
+        fila.querySelectorAll("span")[1].textContent = estado;
+      });
+      alert("✅ Notas recalculadas y actualizadas (solo visual)");
+    }
+
+    cargarCSV();
+  </script>
+
+
 
 <script>
     // Gráfico inicial

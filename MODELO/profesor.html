@@ -18,9 +18,7 @@
             padding: 15px 30px;
             text-align: center;
         }
-        h1 {
-            margin: 0;
-        }
+        h1 { margin: 0; }
         nav {
             display: flex;
             flex-wrap: wrap;
@@ -38,9 +36,7 @@
             font-weight: 600;
             transition: 0.3s;
         }
-        nav a:hover {
-            background-color: #0056b3;
-        }
+        nav a:hover { background-color: #0056b3; }
         section {
             padding: 25px;
             text-align: center;
@@ -65,15 +61,17 @@
 
 <header>
     <h1>Panel del Profesor</h1>
-    <p class="info">Bienvenido, <strong>Profesor(a)</strong> | IP registrada: <span id="ip">Cargando...</span></p>
+    <p class="info">
+        Bienvenido, <strong>Profesor(a)</strong> | IP registrada: <span id="ip">Cargando...</span>
+    </p>
 </header>
 
 <nav>
     <a href="profesor_asistencia.html">📋 Registrar Asistencia</a>
+    <a href="profesor_notas.html">🧮 Ingresar Notas</a>
     <a href="profesor_horario.html">📅 Ver Horario</a>
     <a href="profesor_aulas.html">🏫 Disponibilidad de Aulas</a>
-    <a href="profesor_notas.html">🧮 Gestión de Notas</a>
-    <a href="profesor_contenido.html">📘 Contenido del Curso</a>
+    <a href="profesor_contenido.html">📘 Subir Sílabos / Contenido</a>
     <a href="profesor_reportes.html">📑 Reportes PDF</a>
 </nav>
 
@@ -87,7 +85,7 @@
 </footer>
 
 <script>
-    // Mostrar IP simulada del profesor
+    // Simulación de IP
     document.getElementById('ip').textContent = "192.168.1.45 (Presencial)";
 </script>
 
