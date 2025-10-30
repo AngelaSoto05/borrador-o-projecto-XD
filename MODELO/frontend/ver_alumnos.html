@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumnos Matriculados </title>
+    <link rel="stylesheet" href="css/table-style.css">
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .grupo-a { background: #d4edda; color: #155724; }
+        .grupo-b { background: #cce5ff; color: #004085; }
+        .estado-activo { background: #d4edda; color: #155724; }
+        .estado-retirado { background: #f8d7da; color: #721c24; }
+        .matricula-prioritaria { 
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #856404;
+            font-weight: 700;
+        }
+        .curso-selector {
+            padding: 20px 30px;
+            background: #f8f9fa;
+        }
+        .curso-selector select {
+            padding: 12px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 300px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Alumnos Matriculados por Asignatura</h1>
+            <p>ESCUELA PROFESIONAL DE CIENCIA DE LA COMPUTACIÓN - CICLO 2025-B</p>
+        </div>
+        
+        <div class="curso-selector">
+            <label for="cursoSelect"><strong>Seleccionar Curso:</strong></label>
+            <select id="cursoSelect" onchange="cargarAlumnos()">
+                <option value="">-- Seleccione un curso --</option>
+                <option value="CS101">CS101 - Teoría de la Computación</option>
+                <option value="MAT101">MAT101 - Matemática Aplicada</option>
+                <option value="CS201">CS201 - Algoritmos y Estructuras de Datos</option>
+                <option value="MAT201">MAT201 - Álgebra Lineal Numérica</option>
+                <option value="LEN101">LEN101 - Inglés Técnico Profesional I</option>
+            </select>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Matriculados</h3>
+                <p id="totalMatriculados">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Grupo A</h3>
+                <p id="grupoA">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Grupo B</h3>
+                <p id="grupoB">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Con Laboratorio</h3>
+                <p id="conLab">0</p>
+            </div>
+        </div>
+        
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar estudiante...">
+            </div>
+            <div>
+                <button class="btn" onclick="exportarExcel()">📥 Exportar</button>
+                <a href="secretaria.html" class="btn btn-secondary">← Volver</a>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Cargando estudiantes...</p>
+            </div>
+            
+            <div id="tableContent" style="display: none;">
+                <h3 id="cursoTitulo" style="margin-bottom: 20px;"></h3>
+                <table id="datosTabla">
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>CUI</th>
+                            <th>Apellidos y Nombres</th>
+                            <th>Correo</th>
+                            <th>Matrícula</th>
+                            <th>Grupo Teoría</th>
+                            <th>Grupo Lab</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="empty-state">
+                <h2>Seleccione un curso para ver los estudiantes matriculados</h2>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let datosActuales = [];
+        
+        async function cargarAlumnos() {
+            const codigoCurso = document.getElementById('cursoSelect').value;
+            
+            if (!codigoCurso) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('tableContent').style.display = 'none';
+                document.getElementById('stats').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('tableContent').style.display = 'none';
+            
+            try {
+                const response = await fetch(`/lumina/secretaria/alumnos-matriculados?curso=${codigoCurso}`);
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos');
+                }
+                
+                const datos = await response.json();
+                datosActuales = datos;
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (datos.length === 0) {
+                    document.getElementById('emptyState').innerHTML = '<h2>No hay estudiantes matriculados en este curso</h2>';
+                    document.getElementById('emptyState').style.display = 'block';
+                } else {
+                    mostrarDatos(datos);
+                    mostrarEstadisticas(datos);
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function mostrarDatos(datos) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            datos.forEach((est, index) => {
+                const grupoLab = est.grupoLaboratorio || '-';
+                const matriculaPrioridad = est.numeroMatricula === 1 ? 
+                    '<span class="badge matricula-prioritaria">⭐ ' + est.numeroMatricula + '</span>' :
+                    est.numeroMatricula;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${est.cui}</strong></td>
+                    <td>${est.apellidosNombres}</td>
+                    <td>${est.correoInstitucional}</td>
+                    <td>${matriculaPrioridad}</td>
+                    <td><span class="badge grupo-${est.grupoTeoria.toLowerCase()}">${est.grupoTeoria}</span></td>
+                    <td>${grupoLab !== '-' ? '<span class="badge grupo-' + grupoLab.toLowerCase() + '">' + grupoLab + '</span>' : '-'}</td>
+                    <td><span class="badge estado-${est.estadoMatricula.toLowerCase()}">${est.estadoMatricula}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            const cursoInfo = datos[0];
+            document.getElementById('cursoTitulo').textContent = 
+                `ASIGNATURA: ${cursoInfo.codigoCurso} - ${cursoInfo.nombreCurso}`;
+            
+            document.getElementById('tableContent').style.display = 'block';
+        }
+        
+        function mostrarEstadisticas(datos) {
+            const total = datos.length;
+            const grupoA = datos.filter(e => e.grupoTeoria === 'A').length;
+            const grupoB = datos.filter(e => e.grupoTeoria === 'B').length;
+            const conLab = datos.filter(e => e.grupoLaboratorio !== null).length;
+            
+            document.getElementById('totalMatriculados').textContent = total;
+            document.getElementById('grupoA').textContent = grupoA;
+            document.getElementById('grupoB').textContent = grupoB;
+            document.getElementById('conLab').textContent = conLab;
+            document.getElementById('stats').style.display = 'grid';
+        }
+        
+        function exportarExcel() {
+            alert('Funcionalidad de exportación en desarrollo');
+        }
+        
+        // Filtro en tiempo real
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchValue = e.target.value.toLowerCase();
+            const filas = document.querySelectorAll('#tableBody tr');
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(searchValue) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
