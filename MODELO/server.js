@@ -1,54 +1,36 @@
-// ======== server.js ========
+// server.js (Ejemplo con Node.js/Express)
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
-const PORT = 3000;
 
-// Middleware
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
+app.use(express.json());
 
-const CSV_PATH = path.join(__dirname, 'data', 'alumnos.csv');
+// Datos de ejemplo
+let estudiantes = [
+  {
+    id: 1,
+    alumno: "Juan Pérez",
+    cont1: 15,
+    parcial1: 12,
+    cont2: 14,
+    parcial2: 16,
+    cont3: 13,
+    final: 14
+  }
+];
 
-// Obtener todos los alumnos
-app.get('/api/alumnos', (req, res) => {
-  fs.readFile(CSV_PATH, 'utf8', (err, data) => {
-    if (err) return res.status(500).send('Error leyendo base de datos');
-    const lines = data.split('\n').slice(1).filter(line => line.trim() !== '');
-    const alumnos = lines.map(line => {
-      const [id, codigo, nombre, usuario, contrasena] = line.split(',');
-      return { id, codigo, nombre, usuario, contrasena };
-    });
-    res.json(alumnos);
-  });
+// Endpoint para obtener estudiantes
+app.get('/api/estudiantes', (req, res) => {
+  res.json(estudiantes);
 });
 
-// Añadir alumno
-app.post('/api/alumnos', (req, res) => {
-  const { id, codigo, nombre, usuario, contrasena } = req.body;
-  const newLine = `\n${id},${codigo},"${nombre}",${usuario},${contrasena}`;
-  fs.appendFile(CSV_PATH, newLine, err => {
-    if (err) return res.status(500).send('Error al guardar');
-    res.send('Alumno agregado');
-  });
+// Endpoint para guardar cambios
+app.post('/api/estudiantes', (req, res) => {
+  estudiantes = req.body;
+  res.json({ message: 'Datos guardados exitosamente' });
 });
 
-// Eliminar alumno
-app.delete('/api/alumnos/:id', (req, res) => {
-  const idEliminar = req.params.id;
-  fs.readFile(CSV_PATH, 'utf8', (err, data) => {
-    if (err) return res.status(500).send('Error al leer archivo');
-    const lines = data.split('\n');
-    const header = lines[0];
-    const nuevas = lines.filter(line => !line.startsWith(idEliminar + ','));
-    fs.writeFile(CSV_PATH, nuevas.join('\n'), err2 => {
-      if (err2) return res.status(500).send('Error al eliminar');
-      res.send('Alumno eliminado');
-    });
-  });
+app.listen(3001, () => {
+  console.log('Servidor corriendo en puerto 3001');
 });
-
-// Servidor
-app.listen(PORT, () => console.log(`✅ Servidor corriendo en http://localhost:${PORT}`));

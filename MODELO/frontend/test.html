@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Conexión</title>
+</head>
+<body>
+    <h1>Test de Conexión a la API</h1>
+    <button onclick="testConexion()">Probar Conexión</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function testConexion() {
+            const resultado = document.getElementById('resultado');
+            
+            try {
+                resultado.innerHTML = '🔄 Probando conexión...';
+                
+                // Test 1: Conexión básica
+                const response = await fetch('http://localhost:3000/api/asistencia/estudiantes');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                resultado.innerHTML = `✅ CONEXIÓN EXITOSA<br>
+                                      📊 Estudiantes recibidos: ${data.length}<br>
+                                      🔍 Primer estudiante: ${data[0]?.alumno || 'No data'}`;
+                
+                console.log('Datos recibidos:', data);
+                
+            } catch (error) {
+                resultado.innerHTML = `❌ ERROR: ${error.message}<br>
+                                      💡 Posibles soluciones:<br>
+                                      • Verifica que el servidor esté corriendo<br>
+                                      • Revisa la consola del servidor<br>
+                                      • Verifica la URL de la API`;
+                console.error('Error completo:', error);
+            }
+        }
+
+        // Probar automáticamente al cargar
+        testConexion();
+    </script>
+</body>
+</html>

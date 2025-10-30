@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Asistencia - Profesor</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9ff;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .info-profesor {
+            background: #e8f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .estadisticas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .estadistica-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .presente { border-left: 4px solid #28a745; }
+        .ausente { border-left: 4px solid #dc3545; }
+        .tardanza { border-left: 4px solid #ffc107; }
+        .total { border-left: 4px solid #007bff; }
+        
+        .lista-estudiantes {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .estudiante-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .estudiante-item:last-child {
+            border-bottom: none;
+        }
+        .estudiante-nombre {
+            flex-grow: 1;
+        }
+        .botones-asistencia {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-asistencia {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-presente { background: #d4edda; color: #155724; }
+        .btn-ausente { background: #f8d7da; color: #721c24; }
+        .btn-tardanza { background: #fff3cd; color: #856404; }
+        .btn-asistencia:hover {
+            opacity: 0.8;
+        }
+        .btn-activo {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 2px currentColor;
+        }
+        .mensaje {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button {
+            padding: 10px 20px;
+            background: #2b3d99;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1a2870;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📊 Registro de Asistencia del Profesor</h1>
+        <button onclick="volver()">⬅ Volver al menú</button>
+        
+        <div class="info-profesor">
+            <p><strong>Profesor:</strong> <span id="nombreProfesor">Juan Pérez</span> | 
+               <strong>IP:</strong> <span id="ipAddress">Cargando...</span> 
+               <span id="tipoConexion"></span>
+            </p>
+            <p><strong>Ubicación:</strong> <span id="ubicacion">Cargando ubicación...</span></p>
+            <p><strong>Fecha:</strong> <span id="fechaActual"></span></p>
+        </div>
+
+        <div class="estadisticas" id="estadisticas">
+            <!-- Las estadísticas se cargarán aquí -->
+        </div>
+    </header>
+
+    <main>
+        <section class="lista-estudiantes">
+            <h2>🎓 Lista de Estudiantes</h2>
+            <div id="mensaje"></div>
+            <div id="listaEstudiantes">
+                <p>Cargando estudiantes...</p>
+            </div>
+        </section>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="guardarTodaAsistencia()" style="background: #28a745;">
+                💾 Guardar toda la asistencia
+            </button>
+            <button onclick="generarReporteAsistencia()" style="background: #17a2b8;">
+                📄 Generar reporte PDF
+            </button>
+        </div>
+    </main>
+
+    <footer style="text-align: center; margin-top: 30px; color: #666;">
+        <p>Universidad Nacional - Sistema de Asistencia © 2025</p>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let estudiantes = [];
+        let ubicacionData = {};
+
+        function volver() {
+            window.location.href = "profesor.html";
+        }
+
+        // Obtener IP y ubicación
+        async function obtenerInformacionGeolocalizacion() {
+            try {
+                // Obtener IP
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                document.getElementById('ipAddress').textContent = ipData.ip;
+                
+                // Determinar tipo de conexión basado en IP
+                const esPresencial = ipData.ip.startsWith('192.168.') || 
+                                   ipData.ip.startsWith('10.') || 
+                                   ipData.ip.startsWith('172.');
+                document.getElementById('tipoConexion').textContent = 
+                    esPresencial ? '(Presencial)' : '(Remoto)';
+
+                // Obtener ubicación aproximada por IP
+                const geoResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const geoData = await geoResponse.json();
+                
+                ubicacionData = {
+                    lat: geoData.latitude,
+                    lon: geoData.longitude,
+                    ciudad: geoData.city,
+                    region: geoData.region
+                };
+                
+                document.getElementById('ubicacion').textContent = 
+                    `Lat: ${geoData.latitude}, Lon: ${geoData.longitude} - ${geoData.city}, ${geoData.region}`;
+
+            } catch (error) {
+                console.error('Error obteniendo geolocalización:', error);
+                document.getElementById('ipAddress').textContent = 'No disponible';
+                document.getElementById('ubicacion').textContent = 'No disponible';
+            }
+        }
+
+        // Formatear fecha actual
+        function actualizarFecha() {
+            const ahora = new Date();
+            const opciones = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('fechaActual').textContent = 
+                ahora.toLocaleDateString('es-PE', opciones);
+        }
+
+        // Cargar estudiantes desde MySQL
+        async function cargarEstudiantes() {
+            try {
+                const response = await fetch(`${API_URL}/asistencia/estudiantes`);
+                estudiantes = await response.json();
+                mostrarEstudiantes();
+                cargarAsistenciaDelDia();
+                cargarEstadisticas();
+            } catch (error) {
+                console.error('Error cargando estudiantes:', error);
+                mostrarMensaje('Error cargando la lista de estudiantes', 'error');
+            }
+        }
+
+        // Mostrar estudiantes en la lista
+        function mostrarEstudiantes() {
+            const container = document.getElementById('listaEstudiantes');
+            container.innerHTML = '';
+
+            estudiantes.forEach(estudiante => {
+                const div = document.createElement('div');
+                div.className = 'estudiante-item';
+                div.innerHTML = `
+                    <div class="estudiante-nombre">${estudiante.alumno}</div>
+                    <div class="botones-asistencia">
+                        <button class="btn-asistencia btn-presente" 
+                                onclick="marcarAsistencia(${estudiante.id}, 'Presente', this)">
+                            ✔️ Presente
+                        </button>
+                        <button class="btn-asistencia btn-tardanza" 
+                                onclick="marcarAsistencia(${estudiante.id}, 'Tardanza', this)">
+                            ⏰ Tardanza
+                        </button>
+                        <button class="btn-asistencia btn-ausente" 
+                                onclick="marcarAsistencia(${estudiante.id}, 'Ausente', this)">
+                            ❌ Ausente
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Marcar asistencia individual
+        async function marcarAsistencia(alumnoId, estado, boton) {
+            try {
+                // Remover clase activa de todos los botones del mismo estudiante
+                const botones = boton.parentElement.querySelectorAll('.btn-asistencia');
+                botones.forEach(btn => btn.classList.remove('btn-activo'));
+                
+                // Agregar clase activa al botón clickeado
+                boton.classList.add('btn-activo');
+
+                const datos = {
+                    alumno_id: alumnoId,
+                    estado: estado,
+                    profesor: document.getElementById('nombreProfesor').textContent,
+                    ubicacion: JSON.stringify(ubicacionData),
+                    ip_address: document.getElementById('ipAddress').textContent
+                };
+
+                const response = await fetch(`${API_URL}/asistencia/registrar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await response.json();
+                
+                if (response.ok) {
+                    mostrarMensaje(`Asistencia registrada: ${estado}`, 'success');
+                    cargarEstadisticas();
+                } else {
+                    mostrarMensaje(resultado.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error registrando asistencia:', error);
+                mostrarMensaje('Error registrando la asistencia', 'error');
+            }
+        }
+
+        // Cargar asistencia del día actual
+        async function cargarAsistenciaDelDia() {
+            try {
+                const response = await fetch(`${API_URL}/asistencia/hoy`);
+                const asistenciaHoy = await response.json();
+                
+                // Marcar los estados ya registrados
+                asistenciaHoy.forEach(registro => {
+                    const botones = document.querySelectorAll(`button[onclick*="${registro.alumno_id}"]`);
+                    botones.forEach(boton => {
+                        if (boton.textContent.includes(registro.estado)) {
+                            boton.classList.add('btn-activo');
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Error cargando asistencia del día:', error);
+            }
+        }
+
+        // Cargar estadísticas
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch(`${API_URL}/asistencia/estadisticas`);
+                const stats = await response.json();
+                
+                const container = document.getElementById('estadisticas');
+                container.innerHTML = `
+                    <div class="estadistica-card total">
+                        <h3>Total</h3>
+                        <p style="font-size: 24px; font-weight: bold;">${stats.total || 0}</p>
+                    </div>
+                    <div class="estadistica-card presente">
+                        <h3>Presentes</h3>
+                        <p style="font-size: 24px; font-weight: bold; color: #28a745;">${stats.presentes || 0}</p>
+                    </div>
+                    <div class="estadistica-card tardanza">
+                        <h3>Tardanzas</h3>
+                        <p style="font-size: 24px; font-weight: bold; color: #ffc107;">${stats.tardanzas || 0}</p>
+                    </div>
+                    <div class="estadistica-card ausente">
+                        <h3>Ausentes</h3>
+                        <p style="font-size: 24px; font-weight: bold; color: #dc3545;">${stats.ausentes || 0}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        function mostrarMensaje(texto, tipo = 'success') {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = texto;
+            mensajeDiv.className = `mensaje ${tipo}`;
+            setTimeout(() => mensajeDiv.textContent = '', 3000);
+        }
+
+        function guardarTodaAsistencia() {
+            // Esta función podría guardar un resumen o enviar notificaciones
+            mostrarMensaje('Asistencia guardada en el sistema', 'success');
+        }
+
+        function generarReporteAsistencia() {
+            alert('Generando reporte de asistencia en PDF...');
+            // Aquí implementarías la generación del PDF
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarFecha();
+            obtenerInformacionGeolocalizacion();
+            cargarEstudiantes();
+            
+            // Actualizar estadísticas cada 30 segundos
+            setInterval(cargarEstadisticas, 30000);
+        });
+    </script>
+</body>
+</html>

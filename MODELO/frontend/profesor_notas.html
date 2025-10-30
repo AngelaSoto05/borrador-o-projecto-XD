@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas - Universidad Nacional</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        input { width: 80px; padding: 5px; }
+        .error { color: red; text-align: center; }
+        .aprobado { color: green; font-weight: bold; }
+        .desaprobado { color: red; font-weight: bold; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Notas de los Estudiantes</h1>
+    
+    <h2>Ingreso y Edición de Notas</h2>
+    
+    <table id="tabla-notas">
+        <thead>
+            <tr>
+                <th>Alumno</th>
+                <th>Cont1</th>
+                <th>Parcial1</th>
+                <th>Cont2</th>
+                <th>Parcial2</th>
+                <th>Cont3</th>
+                <th>Final</th>
+                <th>Promedio</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos se cargarán aquí dinámicamente -->
+        </tbody>
+    </table>
+
+    <button id="guardar-cambios">Guardar Cambios</button>
+
+    <div>
+        <p><strong>Total: <span id="total-alumnos">0</span> alumnos</strong></p>
+        <p><strong>Aprobados: <span id="aprobados">0</span></strong></p>
+        <p><strong>Desaprobados: <span id="desaprobados">0</span></strong></p>
+    </div>
+
+    <hr>
+    <footer>
+        Universidad Nacional - Sistema de Notas © 2025
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
