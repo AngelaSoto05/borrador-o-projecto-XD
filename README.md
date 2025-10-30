@@ -98,3 +98,41 @@ con buenas prácticas y arquitectura escalable.
 
 > 💬 *"La tecnología transforma la educación; nosotros construimos ese puente."*
 
+<<<<<<< HEAD
+=======
+## Estructura del Proyecto
+
+
+
+
+
+## División del Trabajo – Sistema de Gestión Universitario “Lumina”
+
+**Kathia – Módulo de Secretaría Académica**
+- Creación de tablas y triggers de la base de datos relacionados con la gestión académica.
+- Desarrollo de las interfaces HTML correspondientes al módulo de Secretaría.
+- Programación de las funciones Java que conectan la base de datos con las páginas del módulo.
+
+**Daysi – Módulo de Administración**
+- Elaboración de procedimientos almacenados para la base de datos.
+- Desarrollo de las interfaces HTML correspondientes al módulo de Administración.
+- Implementación de las funcionalidades Java que enlazan las operaciones administrativas con la interfaz.
+
+**Angela – Módulo de Profesor**
+- Creación de tablas y vistas asociadas a la gestión docente.
+- Desarrollo de las interfaces HTML correspondientes al módulo de docente.
+- Programación de las funcionalidades Java que conectan las acciones del profesor con la base de datos.
+
+**Katherin – Módulo de Estudiante**
+- Revisión general de las conexiones y apoyo en la creación de tablas complementarias.
+- Desarrollo de las interfaces HTML correspondientes al módulo del estudiante.
+- Implementación de los controladores Java que enlazan las funcionalidades y la base de datos del estudiante.
+
+## Integrantes
+
+- CUEVAS APAZA , KATHIA YERARDINE
+- JARA ARISACA, DAYSI
+- SOTO HUERTA, ANGELA SHIRLETH
+- ZENAYUCA CORIMANYA, KATHERIN MILAGROS 
+
+>>>>>>> 086760f21f5c9f923d6ac23deb3ac96ae2212898

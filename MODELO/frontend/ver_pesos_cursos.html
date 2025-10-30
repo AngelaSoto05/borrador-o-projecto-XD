@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <!--
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -364,3 +365,371 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesos de Evaluación </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .toolbar {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-box input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 300px;
+        }
+        
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        thead {
+            background: #f8f9fa;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .porcentaje {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .total {
+            background: #e7f3ff;
+            font-weight: 700;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card p {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Pesos de Evaluación - Ciclo 2025-B</h1>
+            <p>ESCUELA PROFESIONAL DE CIENCIA DE LA COMPUTACIÓN</p>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Cursos</h3>
+                <p id="totalCursos">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Promedio EP Total</h3>
+                <p id="promedioEP">0%</p>
+            </div>
+            <div class="stat-card">
+                <h3>Promedio EC Total</h3>
+                <p id="promedioEC">0%</p>
+            </div>
+        </div>
+        
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar curso...">
+                <button class="btn" onclick="filtrarTabla()">🔍 Buscar</button>
+            </div>
+            <div>
+                <button class="btn" onclick="recargarDatos()">🔄 Actualizar</button>
+                <a href="secretaria.html" class="btn btn-secondary">← Volver</a>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando datos...</p>
+            </div>
+            
+            <div id="tableContent" style="display: none;">
+                <table id="datosTabla">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Curso</th>
+                            <th>EP1 (%)</th>
+                            <th>EP2 (%)</th>
+                            <th>EP3 (%)</th>
+                            <th>EC1 (%)</th>
+                            <th>EC2 (%)</th>
+                            <th>EC3 (%)</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                </svg>
+                <h2>No hay datos disponibles</h2>
+                <p>Sube un archivo Excel con los pesos de evaluación desde el panel principal</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let datosOriginales = [];
+        
+        async function cargarDatos() {
+            try {
+                const response = await fetch('/lumina/secretaria/pesos-evaluacion');
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos');
+                }
+                
+                const datos = await response.json();
+                datosOriginales = datos;
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (datos.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                } else {
+                    mostrarDatos(datos);
+                    mostrarEstadisticas(datos);
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function mostrarDatos(datos) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            datos.forEach(peso => {
+                const total = peso.ep1 + peso.ep2 + peso.ep3 + peso.ec1 + peso.ec2 + peso.ec3;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${peso.codigoCurso}</strong></td>
+                    <td>${peso.nombreCurso}</td>
+                    <td class="porcentaje">${peso.ep1}</td>
+                    <td class="porcentaje">${peso.ep2}</td>
+                    <td class="porcentaje">${peso.ep3}</td>
+                    <td class="porcentaje">${peso.ec1}</td>
+                    <td class="porcentaje">${peso.ec2}</td>
+                    <td class="porcentaje">${peso.ec3}</td>
+                    <td class="total">${total.toFixed(1)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('tableContent').style.display = 'block';
+        }
+        
+        function mostrarEstadisticas(datos) {
+            const totalCursos = datos.length;
+            const promedioEP = datos.reduce((sum, p) => sum + p.ep1 + p.ep2 + p.ep3, 0) / totalCursos;
+            const promedioEC = datos.reduce((sum, p) => sum + p.ec1 + p.ec2 + p.ec3, 0) / totalCursos;
+            
+            document.getElementById('totalCursos').textContent = totalCursos;
+            document.getElementById('promedioEP').textContent = promedioEP.toFixed(1) + '%';
+            document.getElementById('promedioEC').textContent = promedioEC.toFixed(1) + '%';
+            document.getElementById('stats').style.display = 'grid';
+        }
+        
+        function filtrarTabla() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const datosFiltrados = datosOriginales.filter(peso => 
+                peso.nombreCurso.toLowerCase().includes(searchValue) ||
+                peso.codigoCurso.toLowerCase().includes(searchValue)
+            );
+            mostrarDatos(datosFiltrados);
+        }
+        
+        function recargarDatos() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableContent').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            cargarDatos();
+        }
+        
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', cargarDatos);
+        
+        // Filtrar mientras se escribe
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                filtrarTabla();
+            }
+        });
+    </script>
+</body>
+</html>
+>>>>>>> 086760f21f5c9f923d6ac23deb3ac96ae2212898
