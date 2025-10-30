@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios por Día - UNSA</title>
+    <link rel="stylesheet" href="css/table-style.css">
+    <style>
+        .dia-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .dia-lunes { background: #e3f2fd; color: #1976d2; }
+        .dia-martes { background: #f3e5f5; color: #7b1fa2; }
+        .dia-miercoles { background: #fff3e0; color: #f57c00; }
+        .dia-jueves { background: #e8f5e9; color: #388e3c; }
+        .dia-viernes { background: #fce4ec; color: #c2185b; }
+        .filtro-dia {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filtro-dia button {
+            padding: 10px 20px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .filtro-dia button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        .hora { font-family: 'Courier New', monospace; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Horarios por Día</h1>
+            <p>ESCUELA PROFESIONAL DE CIENCIA DE LA COMPUTACIÓN - CICLO 2025-B</p>
+        </div>
+        
+        <div class="filtro-dia">
+            <button onclick="filtrarPorDia('TODOS')" class="active" id="btn-todos">TODOS</button>
+            <button onclick="filtrarPorDia('LUNES')" id="btn-lunes">LUNES</button>
+            <button onclick="filtrarPorDia('MARTES')" id="btn-martes">MARTES</button>
+            <button onclick="filtrarPorDia('MIERCOLES')" id="btn-miercoles">MIÉRCOLES</button>
+            <button onclick="filtrarPorDia('JUEVES')" id="btn-jueves">JUEVES</button>
+            <button onclick="filtrarPorDia('VIERNES')" id="btn-viernes">VIERNES</button>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Clases</h3>
+                <p id="totalClases">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Salones Utilizados</h3>
+                <p id="totalSalones">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Teorías</h3>
+                <p id="totalTeorias">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Laboratorios</h3>
+                <p id="totalLabs">0</p>
+            </div>
+        </div>
+        
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar curso, profesor o salón...">
+            </div>
+            <div>
+                <button class="btn" onclick="cargarDatos()">🔄 Actualizar</button>
+                <a href="secretaria.html" class="btn btn-secondary">← Volver</a>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando horarios...</p>
+            </div>
+            
+            <div id="tableContent" style="display: none;">
+                <table id="datosTabla">
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Código</th>
+                            <th>Curso</th>
+                            <th>Profesor</th>
+                            <th>Día</th>
+                            <th>Hora Inicio</th>
+                            <th>Hora Fin</th>
+                            <th>Tipo</th>
+                            <th>Grupo</th>
+                            <th>Salón</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <h2>No hay horarios registrados</h2>
+                <p>Sube el archivo Excel de horarios desde el panel principal</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let datosOriginales = [];
+        let diaFiltrado = 'TODOS';
+        
+        async function cargarDatos() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableContent').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            try {
+                const response = await fetch('/lumina/secretaria/horarios');
+                if (!response.ok) throw new Error('Error al cargar los datos');
+                
+                const datos = await response.json();
+                datosOriginales = datos;
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (datos.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                } else {
+                    mostrarDatos(datos);
+                    mostrarEstadisticas(datos);
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function mostrarDatos(datos) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            datos.forEach((h, index) => {
+                const diaClass = 'dia-' + h.diaSemana.toLowerCase();
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${h.codigoCurso}</strong></td>
+                    <td>${h.nombreCurso}</td>
+                    <td>${h.profesor}</td>
+                    <td><span class="dia-badge ${diaClass}">${h.diaSemana}</span></td>
+                    <td class="hora">${h.horaInicio}</td>
+                    <td class="hora">${h.horaFin}</td>
+                    <td>${h.tipoClase}</td>
+                    <td style="text-align: center; font-weight: 700;">${h.grupo}</td>
+                    <td><strong>${h.numeroSalon}</strong> (${h.tipoSalon})</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('tableContent').style.display = 'block';
+        }
+        
+        function mostrarEstadisticas(datos) {
+            const salones = new Set(datos.map(h => h.numeroSalon));
+            const teorias = datos.filter(h => h.tipoClase === 'TEORIA').length;
+            const labs = datos.filter(h => h.tipoClase === 'LABORATORIO').length;
+            
+            document.getElementById('totalClases').textContent = datos.length;
+            document.getElementById('totalSalones').textContent = salones.size;
+            document.getElementById('totalTeorias').textContent = teorias;
+            document.getElementById('totalLabs').textContent = labs;
+            document.getElementById('stats').style.display = 'grid';
+        }
+        
+        function filtrarPorDia(dia) {
+            diaFiltrado = dia;
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.filtro-dia button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-' + dia.toLowerCase()).classList.add('active');
+            
+            // Filtrar datos
+            const datosFiltrados = dia === 'TODOS' ? 
+                datosOriginales : 
+                datosOriginales.filter(h => h.diaSemana === dia);
+            
+            mostrarDatos(datosFiltrados);
+            mostrarEstadisticas(datosFiltrados);
+        }
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchValue = e.target.value.toLowerCase();
+            const filas = document.querySelectorAll('#tableBody tr');
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(searchValue) ? '' : 'none';
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', cargarDatos);
+    </script>
+</body>
+</html>
