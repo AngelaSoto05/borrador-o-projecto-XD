@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - LUMINA STUDENT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Sidebar - Mismo estilo que el dashboard */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, #1a2530 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-details h3 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .logout-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .logout-btn:hover {
+            opacity: 1;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .menu-item.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb i {
+            font-size: 0.7rem;
+        }
+
+        .page-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .profile-info h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .profile-info p {
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .form-container {
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #7f8c8d;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #ecf0f1;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .strength-weak {
+            background: var(--danger);
+            width: 33%;
+        }
+
+        .strength-medium {
+            background: var(--warning);
+            width: 66%;
+        }
+
+        .strength-strong {
+            background: var(--success);
+            width: 100%;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .message.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .logo h1, .user-details, .menu-title, .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .user-info {
+                justify-content: center;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>LUMINA STUDENT</h1>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-details">
+                <h3 id="userName">Estudiante</h3>
+                <p id="userCode">Código: ---</p>
+            </div>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+        
+        <div class="menu">
+            <div class="menu-section">
+                <a href="estudiante_dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>DASHBOARD</span>
+                </a>
+                <div class="menu-title">Panel Principal</div>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_horario.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>MI HORARIO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_matricula.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>MATRÍCULA LABORATORIOS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_notas.html" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>MIS NOTAS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_contenido.html" class="menu-item">
+                    <i class="fas fa-book-open"></i>
+                    <span>CONTENIDO ACADÉMICO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_perfil.html" class="menu-item active">
+                    <i class="fas fa-user"></i>
+                    <span>MI PERFIL</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Mi Perfil</h1>
+            <div class="breadcrumb">
+                <span>Inicio</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Mi Perfil</span>
+            </div>
+        </div>
+        
+        <div class="page-content">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">AS</div>
+                <div class="profile-info">
+                    <h2 id="profileName">Ángela Soto Huerta</h2>
+                    <p id="profileCode"><strong>Código:</strong> 20212163</p>
+                    <p id="profileCareer"><strong>Carrera:</strong> Ciencia de la Computación</p>
+                    <p id="profileSemester"><strong>Semestre:</strong> 5to Semestre</p>
+                    <p id="profileEmail"><strong>Email:</strong> angela.soto@unsa.edu.pe</p>
+                </div>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="statCourses">6</div>
+                    <div class="stat-label">Cursos Activos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statAverage">15.2</div>
+                    <div class="stat-label">Promedio General</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statAttendance">92%</div>
+                    <div class="stat-label">Asistencia</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statCredits">48</div>
+                    <div class="stat-label">Créditos Aprobados</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="openTab('personal')">Información Personal</button>
+                <button class="tab" onclick="openTab('academic')">Información Académica</button>
+                <button class="tab" onclick="openTab('security')">Seguridad</button>
+            </div>
+
+            <div id="personal" class="tab-content active">
+                <div class="section-title">Información Personal</div>
+                <div class="form-container">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">Nombres</label>
+                            <input type="text" id="firstName" class="form-control" value="Ángela" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Apellidos</label>
+                            <input type="text" id="lastName" class="form-control" value="Soto Huerta" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dni">DNI</label>
+                        <input type="text" id="dni" class="form-control" value="76543210" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Correo Institucional</label>
+                        <input type="email" id="email" class="form-control" value="angela.soto@unsa.edu.pe" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Teléfono</label>
+                        <input type="tel" id="phone" class="form-control" value="+51 987 654 321">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Dirección</label>
+                        <input type="text" id="address" class="form-control" value="Av. Universidad 123, Lima">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthdate">Fecha de Nacimiento</label>
+                        <input type="date" id="birthdate" class="form-control" value="2000-05-15" disabled>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="actualizarInformacionPersonal()">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+
+            <div id="academic" class="tab-content">
+                <div class="section-title">Información Académica</div>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="studentCode">Código de Estudiante</label>
+                        <input type="text" id="studentCode" class="form-control" value="20212163" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="career">Carrera</label>
+                        <input type="text" id="career" class="form-control" value="Ciencia de la Computación" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="faculty">Facultad</label>
+                        <input type="text" id="faculty" class="form-control" value="Ingeniería de Producción y Servicios" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="semester">Semestre Actual</label>
+                        <input type="text" id="semester" class="form-control" value="5to Semestre" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admissionYear">Año de Ingreso</label>
+                        <input type="text" id="admissionYear" class="form-control" value="2021" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="academicStatus">Estado Académico</label>
+                        <input type="text" id="academicStatus" class="form-control" value="Regular" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div id="security" class="tab-content">
+                <div class="section-title">Seguridad y Contraseña</div>
+                <div class="form-container">
+                    <div id="securityMessage" class="message"></div>
+                    
+                    <div class="form-group">
+                        <label for="currentPassword">Contraseña Actual</label>
+                        <input type="password" id="currentPassword" class="form-control" placeholder="Ingresa tu contraseña actual">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword">Nueva Contraseña</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="Ingresa tu nueva contraseña" oninput="checkPasswordStrength()">
+                        <div class="password-strength">
+                            <div class="strength-fill" id="passwordStrength"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirma tu nueva contraseña">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="cambiarContrasena()">
+                        <i class="fas fa-key"></i> Cambiar Contraseña
+                    </button>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #856404; margin-bottom: 10px;"><i class="fas fa-shield-alt"></i> Recomendaciones de Seguridad</h4>
+                        <ul style="color: #856404; font-size: 0.9rem;">
+                            <li>Usa una combinación de letras, números y símbolos</li>
+                            <li>La contraseña debe tener al menos 8 caracteres</li>
+                            <li>No uses información personal fácil de adivinar</li>
+                            <li>Cambia tu contraseña regularmente</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="estudiante_api.js"></script>
+    <script>
+        let perfilData = {};
+
+        // Cargar información del estudiante
+        document.addEventListener('DOMContentLoaded', function() {
+            const estudiante = JSON.parse(localStorage.getItem('estudianteActual')) || {
+                nombre: 'Ángela Soto Huerta',
+                codigo: '20212163',
+                iniciales: 'AS',
+                id: 1
+            };
+
+            document.getElementById('userName').textContent = estudiante.nombre;
+            document.getElementById('userCode').textContent = `Código: ${estudiante.codigo}`;
+            document.getElementById('userAvatar').textContent = estudiante.iniciales;
+
+            // Cargar datos del perfil
+            cargarPerfilEstudiante();
+        });
+
+        // Función para cargar perfil desde la API
+        async function cargarPerfilEstudiante() {
+            try {
+                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
+                perfilData = await estudianteAPI.obtenerDatosEstudiante(estudiante.id);
+                actualizarInterfazPerfil();
+            } catch (error) {
+                console.error('Error:', error);
+                // Datos de ejemplo para pruebas
+                cargarPerfilEjemplo();
+            }
+        }
+
+        // Función para actualizar la interfaz con los datos del perfil
+        function actualizarInterfazPerfil() {
+            // Información personal
+            document.getElementById('profileName').textContent = perfilData.nombreCompleto;
+            document.getElementById('profileCode').innerHTML = `<strong>Código:</strong> ${perfilData.codigo}`;
+            document.getElementById('profileCareer').innerHTML = `<strong>Carrera:</strong> ${perfilData.carrera}`;
+            document.getElementById('profileSemester').innerHTML = `<strong>Semestre:</strong> ${perfilData.semestre}`;
+            document.getElementById('profileEmail').innerHTML = `<strong>Email:</strong> ${perfilData.email}`;
+            document.getElementById('profileAvatar').textContent = perfilData.iniciales;
+
+            // Estadísticas
+            document.getElementById('statCourses').textContent = perfilData.estadisticas.cursosActivos;
+            document.getElementById('statAverage').textContent = perfilData.estadisticas.promedioGeneral;
+            document.getElementById('statAttendance').textContent = perfilData.estadisticas.asistencia;
+            document.getElementById('statCredits').textContent = perfilData.estadisticas.creditosAprobados;
+
+            // Formularios
+            document.getElementById('firstName').value = perfilData.nombres;
+            document.getElementById('lastName').value = perfilData.apellidos;
+            document.getElementById('dni').value = perfilData.dni;
+            document.getElementById('email').value = perfilData.email;
+            document.getElementById('phone').value = perfilData.telefono || '';
+            document.getElementById('address').value = perfilData.direccion || '';
+            document.getElementById('birthdate').value = perfilData.fechaNacimiento;
+
+            document.getElementById('studentCode').value = perfilData.codigo;
+            document.getElementById('career').value = perfilData.carrera;
+            document.getElementById('faculty').value = perfilData.facultad;
+            document.getElementById('semester').value = perfilData.semestre;
+            document.getElementById('admissionYear').value = perfilData.anioIngreso;
+            document.getElementById('academicStatus').value = perfilData.estadoAcademico;
+        }
+
+        // Función para cambiar entre pestañas
+        function openTab(tabName) {
+            // Ocultar todos los contenidos de pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover activo de todas las pestañas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña específica y activar el botón
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Función para verificar fortaleza de contraseña
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthBar = document.getElementById('passwordStrength');
+            
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/\d/)) strength++;
+            if (password.match(/[^a-zA-Z\d]/)) strength++;
+            
+            strengthBar.className = 'strength-fill';
+            
+            if (strength === 0) {
+                strengthBar.style.width = '0%';
+            } else if (strength === 1) {
+                strengthBar.className += ' strength-weak';
+            } else if (strength <= 3) {
+                strengthBar.className += ' strength-medium';
+            } else {
+                strengthBar.className += ' strength-strong';
+            }
+        }
+
+        // Función para actualizar información personal
+        async function actualizarInformacionPersonal() {
+            try {
+                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
+                const datosActualizados = {
+                    telefono: document.getElementById('phone').value,
+                    direccion: document.getElementById('address').value
+                };
+
+                const resultado = await estudianteAPI.actualizarPerfil(estudiante.id, datosActualizados);
+                
+                mostrarMensaje('Información personal actualizada correctamente', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('Error al actualizar la información personal', 'error');
+            }
+        }
+
+        // Función para cambiar contraseña
+        async function cambiarContrasena() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validaciones
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                mostrarMensaje('Por favor, completa todos los campos', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                mostrarMensaje('Las contraseñas nuevas no coinciden', 'error');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                mostrarMensaje('La contraseña debe tener al menos 8 caracteres', 'error');
+                return;
+            }
+
+            try {
+                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
+                const resultado = await estudianteAPI.cambiarContrasena(
+                    estudiante.id, 
+                    currentPassword, 
+                    newPassword
+                );
+
+                mostrarMensaje('Contraseña cambiada exitosamente', 'success');
+                
+                // Limpiar campos
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                document.getElementById('passwordStrength').style.width = '0%';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje(error.message || 'Error al cambiar la contraseña', 'error');
+            }
+        }
+
+        // Función para mostrar mensajes
+        function mostrarMensaje(mensaje, tipo) {
+            const messageDiv = document.getElementById('securityMessage');
+            messageDiv.textContent = mensaje;
+            messageDiv.className = `message ${tipo}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function cargarPerfilEjemplo() {
+            perfilData = {
+                nombreCompleto: 'Ángela Soto Huerta',
+                codigo: '20212163',
+                carrera: 'Ciencia de la Computación',
+                semestre: '5to Semestre',
+                email: 'angela.soto@unsa.edu.pe',
+                iniciales: 'AS',
+                nombres: 'Ángela',
+                apellidos: 'Soto Huerta',
+                dni: '76543210',
+                telefono: '+51 987 654 321',
+                direccion: 'Av. Universidad 123, Lima',
+                fechaNacimiento: '2000-05-15',
+                facultad: 'Ingeniería de Producción y Servicios',
+                anioIngreso: '2021',
+                estadoAcademico: 'Regular',
+                estadisticas: {
+                    cursosActivos: 6,
+                    promedioGeneral: '15.2',
+                    asistencia: '92%',
+                    creditosAprobados: 48
+                }
+            };
+            actualizarInterfazPerfil();
+        }
+
+        // Manejar cierre de sesión
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+                localStorage.removeItem('estudianteActual');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>
