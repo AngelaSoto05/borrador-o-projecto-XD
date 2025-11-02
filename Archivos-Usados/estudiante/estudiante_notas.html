@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Notas - LUMINA STUDENT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Sidebar - Mismo estilo que el dashboard */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, #1a2530 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-details h3 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .logout-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .logout-btn:hover {
+            opacity: 1;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .menu-item.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb i {
+            font-size: 0.7rem;
+        }
+
+        .page-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .semester-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .semester-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--secondary);
+            background: white;
+            color: var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .semester-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .courses-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--secondary);
+            transition: all 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .course-name {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .course-average {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .average-approved {
+            color: var(--success);
+        }
+
+        .average-disapproved {
+            color: var(--danger);
+        }
+
+        .course-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .grades-table th, .grades-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .grades-table th {
+            background-color: var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .status-disapproved {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+
+        .status-pending {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.average {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2980b9 100%);
+        }
+
+        .stat-icon.approved {
+            background: linear-gradient(135deg, var(--success) 0%, #27ae60 100%);
+        }
+
+        .stat-icon.disapproved {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+        }
+
+        .stat-icon.pending {
+            background: linear-gradient(135deg, var(--warning) 0%, #e67e22 100%);
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .stat-info p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .logo h1, .user-details, .menu-title, .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .user-info {
+                justify-content: center;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .courses-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .overall-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .semester-selector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>LUMINA STUDENT</h1>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-details">
+                <h3 id="userName">Estudiante</h3>
+                <p id="userCode">Código: ---</p>
+            </div>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+        
+        <div class="menu">
+            <div class="menu-section">
+                <a href="estudiante_dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>DASHBOARD</span>
+                </a>
+                <div class="menu-title">Panel Principal</div>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_horario.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>MI HORARIO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_matricula.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>MATRÍCULA LABORATORIOS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_notas.html" class="menu-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>MIS NOTAS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_contenido.html" class="menu-item">
+                    <i class="fas fa-book-open"></i>
+                    <span>CONTENIDO ACADÉMICO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_perfil.html" class="menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>MI PERFIL</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Mis Notas Académicas</h1>
+            <div class="breadcrumb">
+                <span>Inicio</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Mis Notas</span>
+            </div>
+        </div>
+        
+        <div class="overall-stats" id="overallStats">
+            <!-- Las estadísticas generales se cargarán aquí -->
+            <div class="loading-message">Cargando estadísticas...</div>
+        </div>
+        
+        <div class="page-content">
+            <div class="section-title">
+                <span>Notas por Curso - Semestre 2023-2</span>
+                <button class="btn btn-primary" onclick="generarReporteNotas()">
+                    <i class="fas fa-file-pdf"></i> Descargar Reporte
+                </button>
+            </div>
+            
+            <div class="semester-selector">
+                <button class="semester-btn active" onclick="cambiarSemestre('2023-2')">2023-2</button>
+                <button class="semester-btn" onclick="cambiarSemestre('2024-1')">2024-1</button>
+                <button class="semester-btn" onclick="cambiarSemestre('2024-2')">2024-2</button>
+            </div>
+            
+            <div class="courses-container" id="coursesContainer">
+                <!-- Los cursos y notas se cargarán aquí dinámicamente -->
+                <div class="loading-message">Cargando cursos y notas...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/estudiantes';
+        let notasData = [];
+        let semestreActual = '2023-2';
+
+        // Cargar información del estudiante
+        document.addEventListener('DOMContentLoaded', function() {
+            const estudiante = JSON.parse(localStorage.getItem('estudianteActual')) || {
+                nombre: 'Ángela Soto Huerta',
+                codigo: '20212163',
+                iniciales: 'AS',
+                id: 1
+            };
+
+            document.getElementById('userName').textContent = estudiante.nombre;
+            document.getElementById('userCode').textContent = `Código: ${estudiante.codigo}`;
+            document.getElementById('userAvatar').textContent = estudiante.iniciales;
+
+            // Cargar datos iniciales
+            cargarNotasEstudiante();
+        });
+
+        // Función para cargar notas del estudiante desde la API
+        async function cargarNotasEstudiante() {
+            try {
+                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
+                const response = await fetch(`${API_URL}/notas/${estudiante.id}?semestre=${semestreActual}`);
+                
+                if (!response.ok) throw new Error('Error al cargar notas');
+                
+                notasData = await response.json();
+                mostrarEstadisticasGenerales();
+                mostrarCursosYNotas();
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarDatosEjemplo(); // Datos de ejemplo si falla la API
+            }
+        }
+
+        // Función para mostrar estadísticas generales
+        function mostrarEstadisticasGenerales() {
+            const stats = calcularEstadisticas();
+            const container = document.getElementById('overallStats');
+            
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon average">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>${stats.promedioGeneral}</h3>
+                        <p>Promedio General</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon approved">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>${stats.cursosAprobados}</h3>
+                        <p>Cursos Aprobados</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon disapproved">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>${stats.cursosDesaprobados}</h3>
+                        <p>Cursos Desaprobados</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>${stats.cursosPendientes}</h3>
+                        <p>Cursos en Progreso</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para mostrar cursos y notas
+        function mostrarCursosYNotas() {
+            const container = document.getElementById('coursesContainer');
+            
+            if (notasData.length === 0) {
+                container.innerHTML = '<div class="no-results">No hay notas disponibles para este semestre</div>';
+                return;
+            }
+
+            container.innerHTML = notasData.map(curso => `
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-name">${curso.nombre}</div>
+                        <div class="course-average ${curso.promedio >= 13 ? 'average-approved' : 'average-disapproved'}">
+                            ${curso.promedio}
+                        </div>
+                    </div>
+                    <div class="course-details">
+                        <div class="detail-item">
+                            <i class="fas fa-code"></i>
+                            <span><strong>Código:</strong> ${curso.codigo}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span><strong>Docente:</strong> ${curso.docente}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-flag"></i>
+                            <span><strong>Estado:</strong> 
+                                <span class="status-badge ${obtenerClaseEstado(curso.promedio)}">
+                                    ${obtenerTextoEstado(curso.promedio)}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <table class="grades-table">
+                        <thead>
+                            <tr>
+                                <th>Evaluación</th>
+                                <th>Nota</th>
+                                <th>Peso</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${curso.notas.map(nota => `
+                                <tr>
+                                    <td>${nota.tipo}</td>
+                                    <td><strong>${nota.valor}</strong></td>
+                                    <td>${nota.peso}%</td>
+                                    <td>${nota.fecha}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `).join('');
+        }
+
+        // Función para calcular estadísticas
+        function calcularEstadisticas() {
+            let promedioGeneral = 0;
+            let cursosAprobados = 0;
+            let cursosDesaprobados = 0;
+            let cursosPendientes = 0;
+
+            if (notasData.length > 0) {
+                const sumaPromedios = notasData.reduce((sum, curso) => sum + parseFloat(curso.promedio), 0);
+                promedioGeneral = (sumaPromedios / notasData.length).toFixed(2);
+                
+                cursosAprobados = notasData.filter(curso => curso.promedio >= 13).length;
+                cursosDesaprobados = notasData.filter(curso => curso.promedio < 13 && curso.promedio > 0).length;
+                cursosPendientes = notasData.filter(curso => curso.promedio === 0).length;
+            }
+
+            return {
+                promedioGeneral,
+                cursosAprobados,
+                cursosDesaprobados,
+                cursosPendientes
+            };
+        }
+
+        // Funciones auxiliares
+        function obtenerClaseEstado(promedio) {
+            if (promedio === 0) return 'status-pending';
+            return promedio >= 13 ? 'status-approved' : 'status-disapproved';
+        }
+
+        function obtenerTextoEstado(promedio) {
+            if (promedio === 0) return 'En Progreso';
+            return promedio >= 13 ? 'Aprobado' : 'Desaprobado';
+        }
+
+        // Función para cambiar semestre
+        function cambiarSemestre(semestre) {
+            semestreActual = semestre;
+            document.querySelectorAll('.semester-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            cargarNotasEstudiante();
+        }
+
+        // Función para generar reporte de notas
+        async function generarReporteNotas() {
+            try {
+                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
+                const response = await fetch(`${API_URL}/reportes/notas/${estudiante.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `reporte_notas_${estudiante.codigo}_${semestreActual}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Error al generar el reporte');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al generar el reporte de notas');
+            }
+        }
+
+        // Datos de ejemplo para pruebas
+        function mostrarDatosEjemplo() {
+            notasData = [
+                {
+                    id: 1,
+                    nombre: 'Programación I',
+                    codigo: 'PROG-101',
+                    docente: 'Ing. Laura Martínez',
+                    promedio: 15.5,
+                    notas: [
+                        { tipo: 'Continuo 1', valor: 14, peso: 15, fecha: '2023-09-15' },
+                        { tipo: 'Parcial 1', valor: 16, peso: 20, fecha: '2023-10-10' },
+                        { tipo: 'Continuo 2', valor: 15, peso: 15, fecha: '2023-10-25' },
+                        { tipo: 'Parcial 2', valor: 17, peso: 20, fecha: '2023-11-15' },
+                        { tipo: 'Final', valor: 16, peso: 30, fecha: '2023-12-10' }
+                    ]
+                },
+                {
+                    id: 2,
+                    nombre: 'Matemáticas Básicas',
+                    codigo: 'MATE-102',
+                    docente: 'Dr. Carlos Rodríguez',
+                    promedio: 11.2,
+                    notas: [
+                        { tipo: 'Continuo 1', valor: 12, peso: 15, fecha: '2023-09-20' },
+                        { tipo: 'Parcial 1', valor: 10, peso: 20, fecha: '2023-10-15' },
+                        { tipo: 'Continuo 2', valor: 11, peso: 15, fecha: '2023-11-05' },
+                        { tipo: 'Parcial 2', valor: 12, peso: 20, fecha: '2023-11-25' },
+                        { tipo: 'Final', valor: 11, peso: 30, fecha: '2023-12-15' }
+                    ]
+                }
+            ];
+            mostrarEstadisticasGenerales();
+            mostrarCursosYNotas();
+        }
+
+        // Manejar cierre de sesión
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+                localStorage.removeItem('estudianteActual');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docentes por Asignatura - UNSA</title>
+    <link rel="stylesheet" href="css/table-style.css">
+    <style>
+        .tipo-teoria { background: #cce5ff; color: #004085; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        .tipo-laboratorio { background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍🏫 Docentes por Asignatura</h1>
+            <p>ESCUELA PROFESIONAL DE CIENCIA DE LA COMPUTACIÓN - CICLO 2025-B</p>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Docentes</h3>
+                <p id="totalDocentes">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Clases Teoría</h3>
+                <p id="totalTeoria">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Clases Laboratorio</h3>
+                <p id="totalLab">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Cursos Activos</h3>
+                <p id="totalCursos">0</p>
+            </div>
+        </div>
+        
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar docente o curso...">
+            </div>
+            <div>
+                <button class="btn" onclick="cargarDatos()">🔄 Actualizar</button>
+                <a href="secretaria.html" class="btn btn-secondary">← Volver</a>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando asignaciones...</p>
+            </div>
+            
+            <div id="tableContent" style="display: none;">
+                <table id="datosTabla">
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Apellidos y Nombres</th>
+                            <th>Departamento</th>
+                            <th>Curso</th>
+                            <th>Tipo de Clase</th>
+                            <th>Grupo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <h2>No hay asignaciones de docentes registradas</h2>
+                <p>Sube el archivo Excel de docentes desde el panel principal</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let datosActuales = [];
+        
+        async function cargarDatos() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableContent').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            try {
+                const response = await fetch('/lumina/secretaria/docentes-asignatura');
+                
+                if (!response.ok) throw new Error('Error al cargar los datos');
+                
+                const datos = await response.json();
+                datosActuales = datos;
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (datos.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                } else {
+                    mostrarDatos(datos);
+                    mostrarEstadisticas(datos);
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function mostrarDatos(datos) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            datos.forEach((doc, index) => {
+                const tipoClase = doc.tipoClase === 'TEORIA' ? 
+                    '<span class="tipo-teoria">Teoría</span>' :
+                    '<span class="tipo-laboratorio">Laboratorio</span>';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${doc.apellidosNombres}</strong></td>
+                    <td>${doc.departamento}</td>
+                    <td>${doc.codigoCurso} - ${doc.nombreCurso}</td>
+                    <td>${tipoClase}</td>
+                    <td style="text-align: center; font-weight: 700;">${doc.grupo}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('tableContent').style.display = 'block';
+        }
+        
+        function mostrarEstadisticas(datos) {
+            const docentesUnicos = new Set(datos.map(d => d.idDocente)).size;
+            const totalTeoria = datos.filter(d => d.tipoClase === 'TEORIA').length;
+            const totalLab = datos.filter(d => d.tipoClase === 'LABORATORIO').length;
+            const cursosUnicos = new Set(datos.map(d => d.codigoCurso)).size;
+            
+            document.getElementById('totalDocentes').textContent = docentesUnicos;
+            document.getElementById('totalTeoria').textContent = totalTeoria;
+            document.getElementById('totalLab').textContent = totalLab;
+            document.getElementById('totalCursos').textContent = cursosUnicos;
+            document.getElementById('stats').style.display = 'grid';
+        }
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchValue = e.target.value.toLowerCase();
+            const filas = document.querySelectorAll('#tableBody tr');
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(searchValue) ? '' : 'none';
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', cargarDatos);
+    </script>
+</body>
+<<<<<<< HEAD
+</html>
+=======
+</html>
+>>>>>>> 086760f21f5c9f923d6ac23deb3ac96ae2212898

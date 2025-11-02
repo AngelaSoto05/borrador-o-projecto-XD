@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<!-- EL SIGUIENTE HTML FUE RENOMBRADO INISIO_SESION-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de Sesión UNSA</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      margin-bottom: 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    .logo p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 100%;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #1a2a6c;
+      font-size: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #1a2a6c;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #1a2a6c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #23368d;
+    }
+
+    .file-upload {
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+    .file-upload h3 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .file-input {
+      display: flex;
+      gap: 10px;
+    }
+
+    .file-input input {
+      flex: 1;
+      padding: 8px;
+      background: white;
+    }
+
+    .file-input button {
+      width: auto;
+      padding: 8px 15px;
+      background: #b21f1f;
+    }
+
+    .file-input button:hover {
+      background: #c72c2c;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: 500;
+      display: none;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: white;
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <h1>Universidad Nacional de San Agustín</h1>
+      <p>Inicio de Sesión</p>
+    </div>
+
+    <div class="login-box">
+      <h2>Acceso al Sistema</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="usuario">Usuario UNSA</label>
+          <input type="email" id="usuario" placeholder="ejemplo@unsa.edu.pe" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="contrasena">Contraseña</label>
+          <input type="password" id="contrasena" placeholder="Contraseña" required>
+        </div>
+        
+        <button type="submit">Ingresar</button>
+      </form>
+      
+      <div id="message" class="message"></div>
+    </div>
+
+    <div class="file-upload">
+      <h3>Cargar Base de Datos de Usuarios</h3>
+      <div class="file-input">
+        <input type="file" id="csvFile" accept=".csv">
+        <button id="loadCsv">Cargar</button>
+      </div>
+      <div id="csvStatus" class="message"></div>
+    </div>
+
+    <div class="footer">
+      <p>© 2023 Universidad Nacional de San Agustín</p>
+    </div>
+  </div>
+
+  <script>
+    // Base de datos de usuarios (se cargará desde el CSV)
+    let usuarios = [];
+
+    // Elementos del DOM
+    const loginForm = document.getElementById('loginForm');
+    const csvFileInput = document.getElementById('csvFile');
+    const loadCsvButton = document.getElementById('loadCsv');
+    const messageDiv = document.getElementById('message');
+    const csvStatusDiv = document.getElementById('csvStatus');
+
+    // Función para mostrar mensajes
+    function mostrarMensaje(elemento, mensaje, tipo) {
+      elemento.textContent = mensaje;
+      elemento.className = 'message ' + tipo;
+      elemento.style.display = 'block';
+      
+      // Ocultar después de 5 segundos
+      setTimeout(() => {
+        elemento.style.display = 'none';
+      }, 5000);
+    }
+
+    // Función para cargar el CSV
+    function cargarCSV(archivo) {
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        try {
+          const contenido = e.target.result;
+          const lineas = contenido.split('\n');
+          usuarios = [];
+          
+          for (let i = 0; i < lineas.length; i++) {
+            const linea = lineas[i].trim();
+            if (linea) {
+              const partes = linea.split(',');
+              if (partes.length >= 2) {
+                const email = partes[0].trim();
+                const password = partes[1].trim();
+                
+                // Validar formato de email UNSA
+                if (email.includes('@unsa.edu.pe')) {
+                  usuarios.push({ email, password });
+                }
+              }
+            }
+          }
+          
+          if (usuarios.length > 0) {
+            mostrarMensaje(csvStatusDiv, `Base de datos cargada: ${usuarios.length} usuarios`, 'success');
+          } else {
+            mostrarMensaje(csvStatusDiv, 'No se encontraron usuarios válidos en el archivo', 'error');
+          }
+        } catch (error) {
+          mostrarMensaje(csvStatusDiv, 'Error al procesar el archivo CSV', 'error');
+          console.error('Error al procesar CSV:', error);
+        }
+      };
+      
+      reader.onerror = function() {
+        mostrarMensaje(csvStatusDiv, 'Error al leer el archivo', 'error');
+      };
+      
+      reader.readAsText(archivo);
+    }
+
+    // Función para iniciar sesión
+    function iniciarSesion(event) {
+      event.preventDefault();
+      
+      if (usuarios.length === 0) {
+        mostrarMensaje(messageDiv, 'Primero debe cargar la base de datos de usuarios', 'error');
+        return;
+      }
+      
+      const usuarioInput = document.getElementById('usuario').value;
+      const contrasenaInput = document.getElementById('contrasena').value;
+      
+      // Validar campos vacíos
+      if (!usuarioInput || !contrasenaInput) {
+        mostrarMensaje(messageDiv, 'Por favor, complete todos los campos', 'error');
+        return;
+      }
+      
+      // Buscar usuario en la base de datos
+      const usuarioEncontrado = usuarios.find(user => 
+        user.email === usuarioInput && user.password === contrasenaInput
+      );
+      
+      if (usuarioEncontrado) {
+        mostrarMensaje(messageDiv, '¡Inicio de sesión exitoso!', 'success');
+        
+        // Simular redirección después de 2 segundos
+        setTimeout(() => {
+          alert(`Bienvenido/a ${usuarioInput}`);
+          loginForm.reset();
+        }, 2000);
+      } else {
+        mostrarMensaje(messageDiv, 'Credenciales incorrectas. Verifique su usuario y contraseña', 'error');
+      }
+    }
+
+    // Event Listeners
+    loginForm.addEventListener('submit', iniciarSesion);
+    
+    loadCsvButton.addEventListener('click', () => {
+      const archivo = csvFileInput.files[0];
+      
+      if (!archivo) {
+        mostrarMensaje(csvStatusDiv, 'Por favor, seleccione un archivo CSV', 'error');
+        return;
+      }
+      
+      if (!archivo.name.toLowerCase().endsWith('.csv')) {
+        mostrarMensaje(csvStatusDiv, 'El archivo debe ser un CSV', 'error');
+        return;
+      }
+      
+      cargarCSV(archivo);
+    });
+  </script>
+</body>
+</html>
