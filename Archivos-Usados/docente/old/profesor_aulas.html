@@ -1,45 +1,1089 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Gestión de Aulas y Laboratorios</title>
-<style>
-  body { font-family: 'Segoe UI', sans-serif; background-color: #f2f7fb; }
-  header { background-color: #004e98; color: white; padding: 20px; text-align: center; }
-  main { padding: 30px; text-align: center; }
-  table { width: 80%; margin: 0 auto; border-collapse: collapse; background: white; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-  th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: center; }
-  th { background-color: #004e98; color: white; }
-  button {
-    padding: 8px 14px; border: none; border-radius: 6px;
-    cursor: pointer; font-weight: 600; color: white;
-  }
-  .ocupado { background-color: gray; cursor: not-allowed; }
-  .libre { background-color: #28a745; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad de Aulas - LUMINA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #9b59b6;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #1abc9c;
+            --theory: #3498db;
+            --lab: #9b59b6;
+            --seminar: #1abc9c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: var(--secondary);
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header h1 i {
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 12px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .action-btn.reserve {
+            background: var(--success);
+        }
+
+        .action-btn.reserve:hover {
+            background: #27ae60;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .action-btn.favorite {
+            background: var(--accent);
+        }
+
+        .action-btn.favorite:hover {
+            background: #8e44ad;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        .availability-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 25px;
+        }
+
+        .rooms-list {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .rooms-list h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--theory);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .room-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .room-card.lab {
+            border-left-color: var(--lab);
+        }
+
+        .room-card.seminar {
+            border-left-color: var(--seminar);
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .room-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+
+        .room-type {
+            background: var(--theory);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .room-type.lab {
+            background: var(--lab);
+        }
+
+        .room-type.seminar {
+            background: var(--seminar);
+        }
+
+        .room-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .room-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .room-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-available {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status-occupied {
+            background: #fdeaea;
+            color: #e74c3c;
+        }
+
+        .status-soon {
+            background: #fef5e7;
+            color: #f39c12;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            color: #bdc3c7;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .favorite-btn.active {
+            color: #e74c3c;
+        }
+
+        .schedule-view {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .schedule-header h2 {
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-option {
+            padding: 8px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-option.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-table th, .schedule-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .schedule-table th {
+            background: var(--secondary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .time-slot {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .room-slot {
+            position: relative;
+            height: 80px;
+            vertical-align: top;
+        }
+
+        .room-slot.free {
+            background: #d5f4e6;
+        }
+
+        .room-slot.occupied {
+            background: #fdeaea;
+        }
+
+        .room-slot.soon {
+            background: #fef5e7;
+        }
+
+        .slot-info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            font-size: 0.85rem;
+        }
+
+        .slot-info.free {
+            color: #27ae60;
+        }
+
+        .slot-info.occupied {
+            color: #e74c3c;
+        }
+
+        .slot-info.soon {
+            color: #f39c12;
+        }
+
+        .reservation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .reservation-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-header h2 {
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+
+        .reservation-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.5s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        @media (max-width: 1200px) {
+            .availability-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .rooms-list {
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .reservation-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-  <h1>Disponibilidad de Aulas y Laboratorios</h1>
-</header>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-door-open"></i> Disponibilidad de Aulas y Laboratorios</h1>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <div class="user-name">Prof. Carlos Rodríguez</div>
+                    <div class="user-department">Ciencias de la Computación</div>
+                </div>
+            </div>
+        </div>
 
-<main>
-  <table>
-    <tr><th>Nombre</th><th>Tipo</th><th>Estado</th><th>Acción</th></tr>
-    <tr><td>Aula 101</td><td>Teoría</td><td>Libre</td><td><button class="libre" onclick="reservar(this)">Reservar</button></td></tr>
-    <tr><td>Aula 102</td><td>Teoría</td><td>Ocupado</td><td><button class="ocupado" disabled>Ocupado</button></td></tr>
-    <tr><td>Lab A1</td><td>Laboratorio</td><td>Libre</td><td><button class="libre" onclick="reservar(this)">Reservar</button></td></tr>
-    <tr><td>Lab A2</td><td>Laboratorio</td><td>Ocupado</td><td><button class="ocupado" disabled>Ocupado</button></td></tr>
-  </table>
-</main>
+        <div class="controls-panel">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filter-day"><i class="fas fa-calendar-day"></i> Día</label>
+                    <select id="filter-day">
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miercoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                        <option value="sabado">Sábado</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-building"><i class="fas fa-building"></i> Edificio</label>
+                    <select id="filter-building">
+                        <option value="">Todos los edificios</option>
+                        <option value="A">Edificio A - Ciencias Básicas</option>
+                        <option value="B">Edificio B - Ingenierías</option>
+                        <option value="C">Edificio C - Laboratorios</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-type"><i class="fas fa-door-open"></i> Tipo de Ambiente</label>
+                    <select id="filter-type">
+                        <option value="">Todos los tipos</option>
+                        <option value="theory">Aula de Teoría</option>
+                        <option value="lab">Laboratorio</option>
+                        <option value="seminar">Sala de Seminarios</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-capacity"><i class="fas fa-users"></i> Capacidad Mínima</label>
+                    <input type="number" id="filter-capacity" min="1" max="200" placeholder="Ej: 30">
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="action-btn reserve" id="btn-reserve">
+                    <i class="fas fa-calendar-plus"></i> Reservar Ambiente
+                </button>
+                <button class="action-btn" id="btn-my-reservations">
+                    <i class="fas fa-list"></i> Mis Reservas
+                </button>
+                <button class="action-btn favorite" id="btn-favorites">
+                    <i class="fas fa-star"></i> Favoritos
+                </button>
+                <button class="action-btn" id="btn-equipment">
+                    <i class="fas fa-desktop"></i> Equipamiento
+                </button>
+                <button class="action-btn" id="btn-report">
+                    <i class="fas fa-file-pdf"></i> Generar Reporte
+                </button>
+            </div>
+        </div>
 
-<script>
-function reservar(btn) {
-  btn.textContent = "Ocupado";
-  btn.className = "ocupado";
-  btn.disabled = true;
-  alert("Aula reservada correctamente (HU 2.3.2)");
-}
-</script>
+        <div class="availability-grid">
+            <div class="rooms-list">
+                <h2><i class="fas fa-list"></i> Ambientes Disponibles</h2>
+                
+                <div class="room-card lab">
+                    <div class="room-header">
+                        <div class="room-name">LAB-401</div>
+                        <div class="room-type lab">Laboratorio</div>
+                    </div>
+                    <div class="room-details">
+                        <div class="room-detail">
+                            <i class="fas fa-building"></i>
+                            <span>Edificio C</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-users"></i>
+                            <span>Capacidad: 25</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-microchip"></i>
+                            <span>Equipos: 25</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-plug"></i>
+                            <span>Red: Sí</span>
+                        </div>
+                    </div>
+                    <div class="room-status">
+                        <div class="status-badge status-available">Disponible</div>
+                        <button class="favorite-btn active"><i class="fas fa-star"></i></button>
+                    </div>
+                </div>
+                
+                <div class="room-card">
+                    <div class="room-header">
+                        <div class="room-name">AULA-302</div>
+                        <div class="room-type">Aula Teoría</div>
+                    </div>
+                    <div class="room-details">
+                        <div class="room-detail">
+                            <i class="fas fa-building"></i>
+                            <span>Edificio A</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-users"></i>
+                            <span>Capacidad: 40</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-video"></i>
+                            <span>Proyector: Sí</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-wifi"></i>
+                            <span>WiFi: Sí</span>
+                        </div>
+                    </div>
+                    <div class="room-status">
+                        <div class="status-badge status-available">Disponible</div>
+                        <button class="favorite-btn"><i class="far fa-star"></i></button>
+                    </div>
+                </div>
+                
+                <div class="room-card lab">
+                    <div class="room-header">
+                        <div class="room-name">LAB-305</div>
+                        <div class="room-type lab">Laboratorio</div>
+                    </div>
+                    <div class="room-details">
+                        <div class="room-detail">
+                            <i class="fas fa-building"></i>
+                            <span>Edificio C</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-users"></i>
+                            <span>Capacidad: 30</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-microchip"></i>
+                            <span>Equipos: 15</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-server"></i>
+                            <span>Servidores: 2</span>
+                        </div>
+                    </div>
+                    <div class="room-status">
+                        <div class="status-badge status-occupied">Ocupado</div>
+                        <button class="favorite-btn"><i class="far fa-star"></i></button>
+                    </div>
+                </div>
+                
+                <div class="room-card seminar">
+                    <div class="room-header">
+                        <div class="room-name">SEM-201</div>
+                        <div class="room-type seminar">Sala Seminarios</div>
+                    </div>
+                    <div class="room-details">
+                        <div class="room-detail">
+                            <i class="fas fa-building"></i>
+                            <span>Edificio B</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-users"></i>
+                            <span>Capacidad: 20</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-video"></i>
+                            <span>Videoconferencia</span>
+                        </div>
+                        <div class="room-detail">
+                            <i class="fas fa-chalkboard"></i>
+                            <span>Pizarra Digital</span>
+                        </div>
+                    </div>
+                    <div class="room-status">
+                        <div class="status-badge status-soon">Disponible en 15 min</div>
+                        <button class="favorite-btn"><i class="far fa-star"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-view">
+                <div class="schedule-header">
+                    <h2><i class="fas fa-calendar-alt"></i> Horario - LAB-401</h2>
+                    <div class="view-options">
+                        <button class="view-option active">Vista Semanal</button>
+                        <button class="view-option">Vista Diaria</button>
+                    </div>
+                </div>
+                
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Lunes</th>
+                            <th>Martes</th>
+                            <th>Miércoles</th>
+                            <th>Jueves</th>
+                            <th>Viernes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-slot">07:00 - 08:30</td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>CC301 - Grupo A</span>
+                                </div>
+                            </td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>CC201 - Grupo B</span>
+                                </div>
+                            </td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="time-slot">08:40 - 10:10</td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>IA401 - Grupo C</span>
+                                </div>
+                            </td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>CC301 - Grupo B</span>
+                                </div>
+                            </td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>BD201 - Grupo A</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="time-slot">10:20 - 11:50</td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>SO201 - Grupo A</span>
+                                </div>
+                            </td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                            <td class="room-slot occupied">
+                                <div class="slot-info occupied">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>CC201 - Grupo C</span>
+                                </div>
+                            </td>
+                            <td class="room-slot free">
+                                <div class="slot-info free">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Disponible</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Reserva -->
+    <div class="reservation-modal" id="reservationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-plus"></i> Nueva Reserva</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form class="reservation-form" id="reservationForm">
+                <div class="form-group">
+                    <label for="res-room">Ambiente</label>
+                    <select id="res-room" required>
+                        <option value="">Seleccionar ambiente</option>
+                        <option value="LAB-401">LAB-401 - Laboratorio</option>
+                        <option value="AULA-302">AULA-302 - Aula Teoría</option>
+                        <option value="SEM-201">SEM-201 - Sala Seminarios</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="res-date">Fecha</label>
+                    <input type="date" id="res-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="res-start">Hora Inicio</label>
+                    <input type="time" id="res-start" required>
+                </div>
+                <div class="form-group">
+                    <label for="res-end">Hora Fin</label>
+                    <input type="time" id="res-end" required>
+                </div>
+                <div class="form-group">
+                    <label for="res-course">Curso / Actividad</label>
+                    <select id="res-course" required>
+                        <option value="">Seleccionar curso</option>
+                        <option value="CC201">CC201 - Ciencia Computación I</option>
+                        <option value="CC301">CC301 - Estructuras de Datos</option>
+                        <option value="IA401">IA401 - Inteligencia Artificial</option>
+                        <option value="BD201">BD201 - Bases de Datos</option>
+                        <option value="SO201">SO201 - Sistemas Operativos</option>
+                        <option value="other">Otra actividad</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label for="res-description">Descripción / Requerimientos Especiales</label>
+                    <textarea id="res-description" placeholder="Describa el propósito de la reserva y cualquier requerimiento especial..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelReservation">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Reserva realizada con éxito</span>
+    </div>
+
+    <script>
+        // Funcionalidad del modal de reserva
+        const reservationModal = document.getElementById('reservationModal');
+        const btnReserve = document.getElementById('btn-reserve');
+        const closeModal = document.getElementById('closeModal');
+        const cancelReservation = document.getElementById('cancelReservation');
+        const reservationForm = document.getElementById('reservationForm');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notification-text');
+
+        // Abrir modal
+        btnReserve.addEventListener('click', () => {
+            reservationModal.classList.add('active');
+        });
+
+        // Cerrar modal
+        function closeReservationModal() {
+            reservationModal.classList.remove('active');
+        }
+
+        closeModal.addEventListener('click', closeReservationModal);
+        cancelReservation.addEventListener('click', closeReservationModal);
+
+        // Enviar formulario de reserva
+        reservationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simular envío de reserva
+            const room = document.getElementById('res-room').value;
+            
+            // Mostrar notificación
+            notificationText.textContent = `Reserva confirmada para ${room}`;
+            notification.classList.add('success', 'show');
+            
+            // Cerrar modal
+            closeReservationModal();
+            
+            // Limpiar formulario
+            reservationForm.reset();
+            
+            // Ocultar notificación después de 3 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        });
+
+        // Funcionalidad de favoritos
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    this.classList.add('active');
+                    
+                    // Mostrar notificación
+                    notificationText.textContent = 'Añadido a favoritos';
+                    notification.classList.add('success', 'show');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    this.classList.remove('active');
+                    
+                    // Mostrar notificación
+                    notificationText.textContent = 'Eliminado de favoritos';
+                    notification.classList.add('success', 'show');
+                }
+                
+                // Ocultar notificación después de 2 segundos
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+        });
+
+        // Funcionalidad de filtros
+        document.getElementById('filter-day').addEventListener('change', applyFilters);
+        document.getElementById('filter-building').addEventListener('change', applyFilters);
+        document.getElementById('filter-type').addEventListener('change', applyFilters);
+        document.getElementById('filter-capacity').addEventListener('input', applyFilters);
+
+        function applyFilters() {
+            // En una implementación real, aquí se filtrarían los resultados
+            console.log('Aplicando filtros...');
+        }
+
+        // Funcionalidad de botones de acción
+        document.getElementById('btn-my-reservations').addEventListener('click', () => {
+            notificationText.textContent = 'Mostrando mis reservas';
+            notification.classList.add('success', 'show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        });
+
+        document.getElementById('btn-favorites').addEventListener('click', () => {
+            notificationText.textContent = 'Mostrando favoritos';
+            notification.classList.add('success', 'show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        });
+
+        document.getElementById('btn-equipment').addEventListener('click', () => {
+            notificationText.textContent = 'Consultando equipamiento';
+            notification.classList.add('success', 'show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        });
+
+        document.getElementById('btn-report').addEventListener('click', () => {
+            notificationText.textContent = 'Generando reporte PDF';
+            notification.classList.add('success', 'show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        });
+    </script>
 </body>
 </html>

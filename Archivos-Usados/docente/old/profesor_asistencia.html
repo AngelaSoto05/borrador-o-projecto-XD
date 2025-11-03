@@ -154,7 +154,7 @@
         let ubicacionData = {};
 
         function volver() {
-            window.location.href = "profesor.html";
+            window.location.href = "nuevo_profesor.html";
         }
 
         // Obtener IP y ubicación
@@ -308,63 +308,3 @@
                 console.error('Error cargando asistencia del día:', error);
             }
         }
-
-        // Cargar estadísticas
-        async function cargarEstadisticas() {
-            try {
-                const response = await fetch(`${API_URL}/asistencia/estadisticas`);
-                const stats = await response.json();
-                
-                const container = document.getElementById('estadisticas');
-                container.innerHTML = `
-                    <div class="estadistica-card total">
-                        <h3>Total</h3>
-                        <p style="font-size: 24px; font-weight: bold;">${stats.total || 0}</p>
-                    </div>
-                    <div class="estadistica-card presente">
-                        <h3>Presentes</h3>
-                        <p style="font-size: 24px; font-weight: bold; color: #28a745;">${stats.presentes || 0}</p>
-                    </div>
-                    <div class="estadistica-card tardanza">
-                        <h3>Tardanzas</h3>
-                        <p style="font-size: 24px; font-weight: bold; color: #ffc107;">${stats.tardanzas || 0}</p>
-                    </div>
-                    <div class="estadistica-card ausente">
-                        <h3>Ausentes</h3>
-                        <p style="font-size: 24px; font-weight: bold; color: #dc3545;">${stats.ausentes || 0}</p>
-                    </div>
-                `;
-            } catch (error) {
-                console.error('Error cargando estadísticas:', error);
-            }
-        }
-
-        function mostrarMensaje(texto, tipo = 'success') {
-            const mensajeDiv = document.getElementById('mensaje');
-            mensajeDiv.textContent = texto;
-            mensajeDiv.className = `mensaje ${tipo}`;
-            setTimeout(() => mensajeDiv.textContent = '', 3000);
-        }
-
-        function guardarTodaAsistencia() {
-            // Esta función podría guardar un resumen o enviar notificaciones
-            mostrarMensaje('Asistencia guardada en el sistema', 'success');
-        }
-
-        function generarReporteAsistencia() {
-            alert('Generando reporte de asistencia en PDF...');
-            // Aquí implementarías la generación del PDF
-        }
-
-        // Inicializar la página
-        document.addEventListener('DOMContentLoaded', () => {
-            actualizarFecha();
-            obtenerInformacionGeolocalizacion();
-            cargarEstudiantes();
-            
-            // Actualizar estadísticas cada 30 segundos
-            setInterval(cargarEstadisticas, 30000);
-        });
-    </script>
-</body>
-</html>
