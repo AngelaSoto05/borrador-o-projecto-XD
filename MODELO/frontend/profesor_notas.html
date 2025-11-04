@@ -1,59 +1,871 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Notas - Universidad Nacional</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        input { width: 80px; padding: 5px; }
-        .error { color: red; text-align: center; }
-        .aprobado { color: green; font-weight: bold; }
-        .desaprobado { color: red; font-weight: bold; }
-        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #45a049; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reserva de Ambientes - Sistema Académico</title>
+<style>
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: auto;
+}
+header {
+  text-align: center;
+  background: linear-gradient(135deg, #0056b3, #003d82);
+  color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  padding: 25px;
+}
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+.card-title h2 {
+  margin: 0;
+  color: #0056b3;
+  font-size: 1.5rem;
+}
+.ambiente-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+.ambiente-item {
+  background-color: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 18px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.ambiente-item:hover {
+  background-color: #e9f2ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.ambiente-item.selected {
+  border-color: #0056b3;
+  background-color: #e9f2ff;
+}
+.ambiente-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0056b3;
+  margin-bottom: 5px;
+}
+.ambiente-details {
+  font-size: 14px;
+  color: #555;
+}
+.schedule-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.schedule-table th, .schedule-table td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 10px 8px;
+}
+.schedule-table th {
+  background-color: #0056b3;
+  color: white;
+  font-weight: 600;
+}
+.schedule-table td {
+  height: 80px;
+  vertical-align: top;
+  position: relative;
+}
+.time-cell {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+.ocupado {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 0.8rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.disponible {
+  background-color: #d4edda;
+  color: #155724;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 0.8rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.disponible:hover {
+  background-color: #c3e6cb;
+}
+.mi-reserva {
+  background-color: #cce5ff;
+  color: #004085;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 0.8rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.reserva-parcial {
+  position: relative;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.parte-reservada {
+  background-color: #cce5ff;
+  color: #004085;
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.parte-disponible {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  position: absolute;
+  left: 0;
+  right: 0;
+  cursor: pointer;
+}
+.parte-disponible:hover {
+  background-color: #c3e6cb;
+}
+.reserva-panel {
+  position: fixed;
+  top: 0;
+  right: -450px;
+  width: 420px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -3px 0 15px rgba(0,0,0,0.1);
+  padding: 25px;
+  transition: right 0.4s ease;
+  overflow-y: auto;
+  z-index: 1000;
+}
+.reserva-panel.active {
+  right: 0;
+}
+.reserva-header {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #0056b3;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
+}
+.form-group {
+  margin-bottom: 18px;
+}
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+}
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: white;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+}
+.btn-primary {
+  background-color: #0056b3;
+  color: white;
+}
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+.mis-reservas {
+  margin-top: 30px;
+}
+.reserva-card {
+  background-color: #f8f9fa;
+  border-left: 4px solid #0056b3;
+  padding: 18px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.reserva-info h4 {
+  margin: 0 0 8px 0;
+  color: #0056b3;
+  font-size: 1.1rem;
+}
+.reserva-details {
+  font-size: 0.95rem;
+  color: #444;
+}
+.rango-info {
+  background: #f0f9ff;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+  border-left: 4px solid #17a2b8;
+  font-size: 0.9rem;
+}
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+.overlay.active {
+  display: block;
+}
+.time-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.time-selector-group {
+  flex: 1;
+}
+.time-selector-group label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+.curso-nombre {
+  font-weight: 600;
+}
+.curso-detalle {
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+</style>
 </head>
 <body>
-    <h1>Notas de los Estudiantes</h1>
-    
-    <h2>Ingreso y Edición de Notas</h2>
-    
-    <table id="tabla-notas">
-        <thead>
-            <tr>
-                <th>Alumno</th>
-                <th>Cont1</th>
-                <th>Parcial1</th>
-                <th>Cont2</th>
-                <th>Parcial2</th>
-                <th>Cont3</th>
-                <th>Final</th>
-                <th>Promedio</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Los datos se cargarán aquí dinámicamente -->
-        </tbody>
-    </table>
 
-    <button id="guardar-cambios">Guardar Cambios</button>
+<div class="container">
+  <header>
+    <h1>Reserva de Ambientes Académicos</h1>
+    <p>Sistema de reservas por horas exactas</p>
+  </header>
 
-    <div>
-        <p><strong>Total: <span id="total-alumnos">0</span> alumnos</strong></p>
-        <p><strong>Aprobados: <span id="aprobados">0</span></strong></p>
-        <p><strong>Desaprobados: <span id="desaprobados">0</span></strong></p>
+  <div class="card">
+    <div class="card-title">
+      <h2>Selecciona un Ambiente</h2>
+      <span id="ambiente-count"></span>
     </div>
+    <div class="ambiente-grid" id="ambientesGrid"></div>
+  </div>
 
-    <hr>
-    <footer>
-        Universidad Nacional - Sistema de Notas © 2025
-    </footer>
+  <div class="card" id="horarioSection" style="display:none;">
+    <div class="card-title">
+      <h2>Horario del Ambiente</h2>
+      <button class="btn btn-secondary" onclick="cambiarAmbiente()">Cambiar Ambiente</button>
+    </div>
+    <h3 id="nombreAmbiente" style="color: #0056b3; margin-bottom: 15px;"></h3>
+    
+    <div class="schedule-container">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+          </tr>
+        </thead>
+        <tbody id="horarioCompleto"></tbody>
+      </table>
+    </div>
+  </div>
 
-    <script src="app.js"></script>
+  <div class="card mis-reservas">
+    <div class="card-title">
+      <h2>Mis Reservas</h2>
+      <span id="reservas-count">0 reservas</span>
+    </div>
+    <div id="listaReservas"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="reserva-panel" id="reservaPanel">
+  <div class="reserva-header">Configurar Reserva</div>
+  
+  <div class="rango-info">
+    <strong>Día seleccionado:</strong> <span id="diaSeleccionado">-</span><br>
+    <strong>Bloque seleccionado:</strong> <span id="bloqueSeleccionado">-</span><br>
+    <strong>Rango disponible:</strong> <span id="rangoDisponible">-</span><br>
+    <strong>Responsable:</strong> <span id="responsableInfo">Dr. García</span>
+  </div>
+  
+  <div class="time-selector">
+    <div class="time-selector-group">
+      <label>Hora inicio</label>
+      <select id="horaInicio">
+        <option value="">Seleccionar hora inicio</option>
+      </select>
+    </div>
+    
+    <div class="time-selector-group">
+      <label>Hora fin</label>
+      <select id="horaFin">
+        <option value="">Seleccionar hora fin</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label>Motivo</label>
+    <select id="motivoReserva">
+      <option value="Clase Extra">Clase Extra</option>
+      <option value="Reunión">Reunión</option>
+      <option value="Examen">Examen</option>
+      <option value="Taller">Taller</option>
+      <option value="Estudio">Estudio</option>
+      <option value="Otro">Otro</option>
+    </select>
+  </div>
+  
+  <div class="button-group">
+    <button class="btn btn-secondary" onclick="cerrarPanel()">Cancelar</button>
+    <button class="btn btn-success" onclick="confirmarReserva()">Confirmar Reserva</button>
+  </div>
+</div>
+
+<script>
+
+const ambientes = [
+  { id:"A101", nombre:"Aula 101", tipo:"Teoría", capacidad:40 },
+  { id:"A102", nombre:"Aula 102", tipo:"Teoría", capacidad:35 },
+  { id:"Lab201", nombre:"Laboratorio 201", tipo:"Computación", capacidad:25 },
+  { id:"Lab301", nombre:"Laboratorio 301", tipo:"Química", capacidad:30 }
+];
+
+// Horarios intervalos
+const horarios = [
+  "07:00", "07:10", "07:20", "07:30", "07:40", "07:50",
+  "08:00", "08:10", "08:20", "08:30", "08:40", "08:50",
+  "09:00", "09:10", "09:20", "09:30", "09:40", "09:50",
+  "10:00", "10:10", "10:20", "10:30", "10:40", "10:50",
+  "11:00", "11:10", "11:20", "11:30", "11:40", "11:50",
+  "12:00", "12:10", "12:20", "12:30", "12:40", "12:50",
+  "13:00", "13:10", "13:20", "13:30", "13:40", "13:50",
+  "14:00", "14:10", "14:20", "14:30", "14:40", "14:50",
+  "15:00", "15:10", "15:20", "15:30", "15:40", "15:50",
+  "16:00", "16:10", "16:20", "16:30", "16:40", "16:50",
+  "17:00", "17:10", "17:20", "17:30", "17:40", "17:50",
+  "18:00", "18:10", "18:20", "18:30", "18:40", "18:50"
+];
+
+const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes"];
+
+let ambienteSel = null;
+let misReservas = [];
+
+const profesorActual = "Dr. García";
+
+// Datos de ejemplo
+let reservasExistentes = [
+
+  { ambiente:"A101", dia:"Lunes", horaInicio:"07:00", horaFin:"07:50", curso:"Matemáticas", profesor:"Dr. Pérez" },
+  { ambiente:"A101", dia:"Lunes", horaInicio:"08:40", horaFin:"09:30", curso:"Física", profesor:"Dra. López" },
+  { ambiente:"A101", dia:"Lunes", horaInicio:"10:20", horaFin:"11:10", curso:"Química", profesor:"Dr. González" },
+  { ambiente:"A101", dia:"Martes", horaInicio:"09:30", horaFin:"10:20", curso:"Biología", profesor:"Dra. Martínez" },
+  { ambiente:"A101", dia:"Martes", horaInicio:"11:10", horaFin:"12:00", curso:"Historia", profesor:"Dr. Rodríguez" },
+  { ambiente:"A101", dia:"Miércoles", horaInicio:"07:50", horaFin:"08:40", curso:"Literatura", profesor:"Dra. Sánchez" },
+  { ambiente:"A101", dia:"Miércoles", horaInicio:"14:30", horaFin:"15:20", curso:"Geografía", profesor:"Dr. Torres" },
+  { ambiente:"A101", dia:"Jueves", horaInicio:"12:00", horaFin:"12:50", curso:"Filosofía", profesor:"Dra. Ramírez" },
+  { ambiente:"A101", dia:"Jueves", horaInicio:"15:20", horaFin:"16:10", curso:"Economía", profesor:"Dr. Flores" },
+  { ambiente:"A101", dia:"Viernes", horaInicio:"08:40", horaFin:"09:30", curso:"Arte", profesor:"Dra. Silva" },
+  
+  { ambiente:"A102", dia:"Lunes", horaInicio:"09:30", horaFin:"10:20", curso:"Programación", profesor:"Ing. Gómez" },
+  { ambiente:"A102", dia:"Lunes", horaInicio:"11:10", horaFin:"12:00", curso:"Bases de Datos", profesor:"Ing. Castro" },
+  { ambiente:"A102", dia:"Martes", horaInicio:"07:00", horaFin:"07:50", curso:"Redes", profesor:"Ing. Morales" },
+  { ambiente:"A102", dia:"Martes", horaInicio:"13:40", horaFin:"14:30", curso:"Sistemas Operativos", profesor:"Ing. Ruiz" },
+  { ambiente:"A102", dia:"Miércoles", horaInicio:"10:20", horaFin:"11:10", curso:"Ingeniería de Software", profesor:"Ing. Vargas" },
+  { ambiente:"A102", dia:"Jueves", horaInicio:"08:40", horaFin:"09:30", curso:"Inteligencia Artificial", profesor:"Dra. Herrera" },
+  { ambiente:"A102", dia:"Viernes", horaInicio:"12:00", horaFin:"12:50", curso:"Seguridad Informática", profesor:"Ing. Ortega" },
+  
+  { ambiente:"Lab201", dia:"Lunes", horaInicio:"07:50", horaFin:"08:40", curso:"Lab. Programación", profesor:"Ing. Rojas" },
+  { ambiente:"Lab201", dia:"Lunes", horaInicio:"10:20", horaFin:"11:10", curso:"Lab. Bases de Datos", profesor:"Ing. Medina" },
+  { ambiente:"Lab201", dia:"Martes", horaInicio:"09:30", horaFin:"10:20", curso:"Lab. Redes", profesor:"Ing. Guzmán" },
+  { ambiente:"Lab201", dia:"Miércoles", horaInicio:"08:40", horaFin:"09:30", curso:"Lab. Sistemas Operativos", profesor:"Ing. Paredes" },
+  { ambiente:"Lab201", dia:"Jueves", horaInicio:"11:10", horaFin:"12:00", curso:"Lab. Ingeniería de Software", profesor:"Ing. Salazar" },
+  { ambiente:"Lab201", dia:"Viernes", horaInicio:"13:40", horaFin:"14:30", curso:"Lab. Inteligencia Artificial", profesor:"Dra. Vega" },
+  
+  { ambiente:"Lab301", dia:"Lunes", horaInicio:"12:00", horaFin:"12:50", curso:"Lab. Química Orgánica", profesor:"Dr. Mendoza" },
+  { ambiente:"Lab301", dia:"Martes", horaInicio:"10:20", horaFin:"11:10", curso:"Lab. Química Inorgánica", profesor:"Dra. Ríos" },
+  { ambiente:"Lab301", dia:"Miércoles", horaInicio:"09:30", horaFin:"10:20", curso:"Lab. Bioquímica", profesor:"Dr. Campos" },
+  { ambiente:"Lab301", dia:"Jueves", horaInicio:"08:40", horaFin:"09:30", curso:"Lab. Física", profesor:"Dra. Núñez" },
+  { ambiente:"Lab301", dia:"Viernes", horaInicio:"11:10", horaFin:"12:00", curso:"Lab. Biología Molecular", profesor:"Dr. Peña" }
+];
+
+// ambientes
+function cargarAmbientes(){
+  document.getElementById("ambiente-count").textContent = ambientes.length + " disponibles";
+  const grid = document.getElementById("ambientesGrid");
+  grid.innerHTML = ambientes.map(a =>
+    `<div class="ambiente-item" onclick="seleccionarAmbiente('${a.id}')">
+      <div class="ambiente-name">${a.nombre}</div>
+      <div class="ambiente-details">${a.tipo} - Capacidad ${a.capacidad}</div>
+    </div>`).join("");
+}
+
+// Seleccionar ambiente¡
+function seleccionarAmbiente(id){
+  ambienteSel = ambientes.find(a => a.id === id);
+  document.getElementById("nombreAmbiente").textContent = ambienteSel.nombre;
+  document.getElementById("horarioSection").style.display = "block";
+  document.querySelectorAll(".ambiente-item").forEach(el => el.classList.remove("selected"));
+  document.querySelector(`[onclick="seleccionarAmbiente('${id}')"]`).classList.add("selected");
+  cargarHorario();
+}
+
+function cambiarAmbiente(){
+  ambienteSel = null;
+  document.getElementById("horarioSection").style.display = "none";
+}
+
+// Generar horario 
+function cargarHorario(){
+  const tbody = document.getElementById("horarioCompleto");
+  tbody.innerHTML = "";
+  
+  // Agrupar horarios en bloques de 50 minutos 
+  const bloques = [];
+  for(let i = 0; i < horarios.length; i += 5) {
+    if(i + 5 <= horarios.length) {
+      bloques.push({
+        inicio: horarios[i],
+        fin: horarios[i+5]
+      });
+    }
+  }
+  
+  // Generar filas para cada bloque horario
+  bloques.forEach(bloque => {
+    let fila = `<tr><td class="time-cell">${bloque.inicio} - ${bloque.fin}</td>`;
+    
+    dias.forEach(dia => {
+      // Verificar si hay alguna reserva en este bloque
+      const ocupaciones = reservasExistentes.filter(r => 
+        r.ambiente === ambienteSel.id && 
+        r.dia === dia && 
+        estaEnBloque(r.horaInicio, r.horaFin, bloque.inicio, bloque.fin)
+      );
+      
+      // Verificar si hay reservas mías en este bloque
+      const misReservasEnBloque = misReservas.filter(r => 
+        r.ambiente === ambienteSel.id && 
+        r.dia === dia && 
+        estaEnBloque(r.horaInicio, r.horaFin, bloque.inicio, bloque.fin)
+      );
+      
+      // Combinar todas las reservas en este bloque
+      const todasReservas = [...ocupaciones, ...misReservasEnBloque];
+      
+      if (todasReservas.length > 0) {
+        // Hay reservas en este bloque
+        if (todasReservas.length === 1 && 
+            todasReservas[0].horaInicio === bloque.inicio && 
+            todasReservas[0].horaFin === bloque.fin) {
+          // La reserva ocupa todo el bloque
+          const reserva = todasReservas[0];
+          if (misReservasEnBloque.includes(reserva)) {
+            fila += `<td><div class="mi-reserva">
+              <div class="curso-nombre">Mi reserva</div>
+              <div class="curso-detalle">${reserva.motivo}</div>
+            </div></td>`;
+          } else {
+            fila += `<td><div class="ocupado">
+              <div class="curso-nombre">${reserva.curso}</div>
+              <div class="curso-detalle">${reserva.profesor}</div>
+            </div></td>`;
+          }
+        } else {
+          // Hay reservas parciales en el bloque
+          fila += `<td><div class="reserva-parcial">`;
+          
+          // Ordenar reservas por hora de inicio
+          todasReservas.sort((a, b) => horarios.indexOf(a.horaInicio) - horarios.indexOf(b.horaInicio));
+          
+          let tiempoActual = bloque.inicio;
+          
+          todasReservas.forEach(reserva => {
+            // Añadir espacio disponible antes de la reserva si existe
+            if (reserva.horaInicio !== tiempoActual) {
+              const altura = calcularAltura(tiempoActual, reserva.horaInicio, bloque);
+              fila += `<div class="parte-disponible" style="top: ${calcularPosicion(tiempoActual, bloque)}%; height: ${altura}%" onclick="abrirPanelDesdeParte('${dia}', '${tiempoActual}', '${reserva.horaInicio}')"></div>`;
+            }
+            
+            // Añadir la reserva
+            const alturaReserva = calcularAltura(reserva.horaInicio, reserva.horaFin, bloque);
+            if (misReservasEnBloque.includes(reserva)) {
+              fila += `<div class="parte-reservada" style="top: ${calcularPosicion(reserva.horaInicio, bloque)}%; height: ${alturaReserva}%">
+                <div class="curso-nombre">Mi reserva</div>
+                <div class="curso-detalle">${reserva.horaInicio}-${reserva.horaFin}</div>
+              </div>`;
+            } else {
+              fila += `<div class="parte-reservada" style="top: ${calcularPosicion(reserva.horaInicio, bloque)}%; height: ${alturaReserva}%">
+                <div class="curso-nombre">${reserva.curso}</div>
+                <div class="curso-detalle">${reserva.profesor}</div>
+              </div>`;
+            }
+            
+            tiempoActual = reserva.horaFin;
+          });
+          
+          // Añadir espacio disponible después de la última reserva si existe
+          if (tiempoActual !== bloque.fin) {
+            const altura = calcularAltura(tiempoActual, bloque.fin, bloque);
+            fila += `<div class="parte-disponible" style="top: ${calcularPosicion(tiempoActual, bloque)}%; height: ${altura}%" onclick="abrirPanelDesdeParte('${dia}', '${tiempoActual}', '${bloque.fin}')"></div>`;
+          }
+          
+          fila += `</div></td>`;
+        }
+      } else {
+        // No hay reservas, todo el bloque está disponible
+        fila += `<td><div class="disponible" onclick="abrirPanel('${dia}','${bloque.inicio}','${bloque.fin}')">Disponible</div></td>`;
+      }
+    });
+    
+    fila += "</tr>";
+    tbody.innerHTML += fila;
+  });
+}
+
+// Función auxiliar para verificar si un horario está dentro de un bloque
+function estaEnBloque(horaInicio, horaFin, bloqueInicio, bloqueFin) {
+  return horaInicio < bloqueFin && horaFin > bloqueInicio;
+}
+
+// Calcular la posición vertical de un horario dentro de un bloque
+function calcularPosicion(hora, bloque) {
+  const inicioMinutos = horaAMinutos(bloque.inicio);
+  const finMinutos = horaAMinutos(bloque.fin);
+  const horaMinutos = horaAMinutos(hora);
+  
+  return ((horaMinutos - inicioMinutos) / (finMinutos - inicioMinutos)) * 100;
+}
+
+// Calcular la altura de un segmento dentro de un bloque
+function calcularAltura(horaInicio, horaFin, bloque) {
+  const inicioMinutos = horaAMinutos(bloque.inicio);
+  const finMinutos = horaAMinutos(bloque.fin);
+  const inicioSegmento = horaAMinutos(horaInicio);
+  const finSegmento = horaAMinutos(horaFin);
+  
+  return ((finSegmento - inicioSegmento) / (finMinutos - inicioMinutos)) * 100;
+}
+
+// Convertir hora a minutos
+function horaAMinutos(hora) {
+  const [h, m] = hora.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// Convertir minutos a hora
+function minutosAHora(minutos) {
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+// lateral
+let diaActual = null;
+let bloqueInicio = null;
+let bloqueFin = null;
+
+function abrirPanel(dia, horaInicioBloque, horaFinBloque){
+  diaActual = dia;
+  bloqueInicio = horaInicioBloque;
+  bloqueFin = horaFinBloque;
+  
+  const panel = document.getElementById("reservaPanel");
+  const overlay = document.getElementById("overlay");
+  panel.classList.add("active");
+  overlay.classList.add("active");
+  
+  document.getElementById("diaSeleccionado").textContent = dia;
+  document.getElementById("bloqueSeleccionado").textContent = `${horaInicioBloque} - ${horaFinBloque}`;
+  document.getElementById("responsableInfo").textContent = profesorActual;
+  
+  // Calcular el rango disponible desde el inicio del bloque
+  const rangoDisponible = calcularRangoDisponible(dia, horaInicioBloque);
+  document.getElementById("rangoDisponible").textContent = `${rangoDisponible.inicio} - ${rangoDisponible.fin}`;
+  
+  const s1 = document.getElementById("horaInicio");
+  const s2 = document.getElementById("horaFin");
+  
+  s1.innerHTML = "";
+  s2.innerHTML = "";
+  
+  // opciones de hora inicio (desde el inicio del bloque hasta el fin del rango disponible)
+  let inicioIndex = horarios.indexOf(horaInicioBloque);
+  let finIndex = horarios.indexOf(rangoDisponible.fin);
+  
+  for(let i = inicioIndex; i < finIndex; i++) {
+    s1.innerHTML += `<option value="${horarios[i]}">${horarios[i]}</option>`;
+  }
+  
+  // opciones de hora fin (desde la hora de inicio + 10min hasta el final del rango disponible)
+  s1.onchange = function() {
+    s2.innerHTML = '<option value="">Seleccionar hora fin</option>';
+    const inicioSeleccionado = this.value;
+    if(inicioSeleccionado) {
+      let inicioIdx = horarios.indexOf(inicioSeleccionado);
+      for(let i = inicioIdx + 1; i <= finIndex; i++) {
+        s2.innerHTML += `<option value="${horarios[i]}">${horarios[i]}</option>`;
+      }
+    }
+  };
+  
+  // primera hora por defecto
+  if(s1.options.length > 0) {
+    s1.selectedIndex = 0;
+    s1.onchange();
+  }
+}
+
+function abrirPanelDesdeParte(dia, horaInicioParte, horaFinParte) {
+  diaActual = dia;
+  bloqueInicio = horaInicioParte;
+  bloqueFin = horaFinParte;
+  
+  const panel = document.getElementById("reservaPanel");
+  const overlay = document.getElementById("overlay");
+  panel.classList.add("active");
+  overlay.classList.add("active");
+  
+  document.getElementById("diaSeleccionado").textContent = dia;
+  document.getElementById("bloqueSeleccionado").textContent = `${horaInicioParte} - ${horaFinParte}`;
+  document.getElementById("responsableInfo").textContent = profesorActual;
+  
+  // El rango disponible es exactamente la parte seleccionada
+  document.getElementById("rangoDisponible").textContent = `${horaInicioParte} - ${horaFinParte}`;
+  
+  const s1 = document.getElementById("horaInicio");
+  const s2 = document.getElementById("horaFin");
+  
+  s1.innerHTML = "";
+  s2.innerHTML = "";
+  
+  // opciones de hora inicio (desde el inicio de la parte hasta 10 min antes del fin)
+  let inicioIndex = horarios.indexOf(horaInicioParte);
+  let finIndex = horarios.indexOf(horaFinParte);
+  
+  for(let i = inicioIndex; i < finIndex; i++) {
+    s1.innerHTML += `<option value="${horarios[i]}">${horarios[i]}</option>`;
+  }
+  
+  //opciones de hora fin (desde la hora de inicio + 10min hasta el final de la parte)
+  s1.onchange = function() {
+    s2.innerHTML = '<option value="">Seleccionar hora fin</option>';
+    const inicioSeleccionado = this.value;
+    if(inicioSeleccionado) {
+      let inicioIdx = horarios.indexOf(inicioSeleccionado);
+      for(let i = inicioIdx + 1; i <= finIndex; i++) {
+        s2.innerHTML += `<option value="${horarios[i]}">${horarios[i]}</option>`;
+      }
+    }
+  };
+  
+  //  primera hora por defecto
+  if(s1.options.length > 0) {
+    s1.selectedIndex = 0;
+    s1.onchange();
+  }
+}
+
+function calcularRangoDisponible(dia, horaInicio) {
+  // encontrar todas las reservas para este ambiente y día
+  const reservasDia = reservasExistentes
+    .filter(r => r.ambiente === ambienteSel.id && r.dia === dia)
+    .concat(misReservas.filter(r => r.ambiente === ambienteSel.id && r.dia === dia))
+    .sort((a, b) => horarios.indexOf(a.horaInicio) - horarios.indexOf(b.horaInicio));
+  
+  let inicioDisponible = horaInicio;
+  let finDisponible = horarios[horarios.length - 1]; // Última hora disponible
+  
+  // encontrar la primera reserva que empiece después del inicio
+  for(const reserva of reservasDia) {
+    if(horarios.indexOf(reserva.horaInicio) >= horarios.indexOf(horaInicio)) {
+      finDisponible = reserva.horaInicio;
+      break;
+    }
+  }
+  
+  return {
+    inicio: inicioDisponible,
+    fin: finDisponible
+  };
+}
+
+function cerrarPanel(){
+  document.getElementById("reservaPanel").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
+}
+
+// Confirmar reserva
+function confirmarReserva(){
+  const hi = document.getElementById("horaInicio").value;
+  const hf = document.getElementById("horaFin").value;
+  const motivo = document.getElementById("motivoReserva").value;
+  
+  if(!hi || !hf) {
+    alert("Debes seleccionar tanto la hora de inicio como la de fin");
+    return;
+  }
+  
+  if(horarios.indexOf(hi) >= horarios.indexOf(hf)) {
+    alert("La hora de fin debe ser posterior a la hora de inicio");
+    return;
+  }
+  
+  // Verificar que no haya conflictos con reservas existentes
+  const conflicto = reservasExistentes.some(r => 
+    r.ambiente === ambienteSel.id && 
+    r.dia === diaActual && 
+    ((horarios.indexOf(r.horaInicio) < horarios.indexOf(hf) && horarios.indexOf(r.horaFin) > horarios.indexOf(hi)))
+  );
+  
+  if(conflicto) {
+    alert("El horario seleccionado tiene conflictos con reservas existentes");
+    return;
+  }
+  
+  // Verificar conflicto con mis reservas
+  const conflictoPropio = misReservas.some(r => 
+    r.ambiente === ambienteSel.id && 
+    r.dia === diaActual && 
+    ((horarios.indexOf(r.horaInicio) < horarios.indexOf(hf) && horarios.indexOf(r.horaFin) > horarios.indexOf(hi)))
+  );
+  
+  if(conflictoPropio) {
+    alert("Ya tienes una reserva en ese horario");
+    return;
+  }
+  
+  misReservas.push({
+    ambiente: ambienteSel.id,
+    dia: diaActual,
+    horaInicio: hi,
+    horaFin: hf,
+    motivo: motivo,
+    responsable: profesorActual
+  });
+  
+  cerrarPanel();
+  cargarHorario();
+  actualizarMisReservas();
+  alert("Reserva confirmada exitosamente");
+}
+
+function actualizarMisReservas(){
+  const cont = document.getElementById("listaReservas");
+  
+  if(misReservas.length === 0) {
+    cont.innerHTML = "<p>No tienes reservas activas</p>";
+  } else {
+    cont.innerHTML = misReservas.map(r =>
+      `<div class="reserva-card">
+         <div class="reserva-info">
+           <h4>${r.ambiente} - ${r.dia}</h4>
+           <div class="reserva-details">${r.horaInicio} a ${r.horaFin} | ${r.motivo}<br>
+           <strong>Responsable:</strong> ${r.responsable}</div>
+         </div>
+         <button class="btn btn-danger" onclick="cancelarReserva('${r.ambiente}', '${r.dia}', '${r.horaInicio}')">Cancelar</button>
+       </div>`).join("");
+  }
+  
+  document.getElementById("reservas-count").textContent = misReservas.length + (misReservas.length === 1 ? " reserva" : " reservas");
+}
+
+//  Cancelar reserva 
+function cancelarReserva(ambiente, dia, horaInicio) {
+  if(confirm("¿Estás seguro de que deseas cancelar esta reserva?")) {
+    misReservas = misReservas.filter(r => 
+      !(r.ambiente === ambiente && r.dia === dia && r.horaInicio === horaInicio)
+    );
+    cargarHorario();
+    actualizarMisReservas();
+    alert("Reserva cancelada exitosamente");
+  }
+}
+
+cargarAmbientes();
+</script>
 </body>
 </html>
