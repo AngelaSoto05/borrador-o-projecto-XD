@@ -3,57 +3,525 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Notas - Universidad Nacional</title>
+    <title>Ingreso de Notas - LUMINA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        input { width: 80px; padding: 5px; }
-        .error { color: red; text-align: center; }
-        .aprobado { color: green; font-weight: bold; }
-        .desaprobado { color: red; font-weight: bold; }
-        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #45a049; }
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #9b59b6;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            text-decoration: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: var(--secondary);
+            font-size: 2rem;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+
+        .course-selector {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .notes-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .aprobado {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .desaprobado {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .btn-save {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box h4 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .stat-box .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>Notas de los Estudiantes</h1>
-    
-    <h2>Ingreso y Edición de Notas</h2>
-    
-    <table id="tabla-notas">
-        <thead>
-            <tr>
-                <th>Alumno</th>
-                <th>Cont1</th>
-                <th>Parcial1</th>
-                <th>Cont2</th>
-                <th>Parcial2</th>
-                <th>Cont3</th>
-                <th>Final</th>
-                <th>Promedio</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Los datos se cargarán aquí dinámicamente -->
-        </tbody>
-    </table>
-
-    <button id="guardar-cambios">Guardar Cambios</button>
-
-    <div>
-        <p><strong>Total: <span id="total-alumnos">0</span> alumnos</strong></p>
-        <p><strong>Aprobados: <span id="aprobados">0</span></strong></p>
-        <p><strong>Desaprobados: <span id="desaprobados">0</span></strong></p>
+    <div class="sidebar">
+        <div class="logo">
+            <h1>LUMINA PROFESOR</h1>
+        </div>
+        <div class="user-info">
+            <h3 id="profesor-name">Profesor</h3>
+        </div>
+        <div class="menu">
+            <a href="nuevo_profesor.html" class="menu-item">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver al Panel</span>
+            </a>
+        </div>
     </div>
 
-    <hr>
-    <footer>
-        Universidad Nacional - Sistema de Notas © 2025
-    </footer>
+    <div class="main-content">
+        <div class="header">
+            <h1><i class="fas fa-edit"></i> Ingreso de Notas</h1>
+        </div>
 
-    <script src="app.js"></script>
+        <div id="periodo-info-container"></div>
+
+        <div id="content-notas" style="display: none;">
+            <div class="course-selector">
+                <div class="form-group">
+                    <label><i class="fas fa-book"></i> Seleccionar Curso</label>
+                    <select id="select-course" onchange="cargarEstudiantes()">
+                        <option value="">-- Seleccione un curso --</option>
+                        <option value="MAT101">MAT101 - Matemática Aplicada</option>
+                        <option value="CC201">CC201 - Ciencia de la Computación I</option>
+                        <option value="FIS201">FIS201 - Física I</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-clipboard-list"></i> Tipo de Evaluación</label>
+                    <select id="select-evaluation">
+                        <option value="">-- Seleccione evaluación --</option>
+                        <option value="continua1">Continua 1</option>
+                        <option value="parcial1">Parcial 1</option>
+                        <option value="continua2">Continua 2</option>
+                        <option value="parcial2">Parcial 2</option>
+                        <option value="continua3">Continua 3</option>
+                        <option value="parcial3">Parcial 3</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="notes-table-container" id="table-container" style="display: none;">
+                <table id="tabla-notas">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Alumno</th>
+                            <th>Cont1</th>
+                            <th>Parcial1</th>
+                            <th>Cont2</th>
+                            <th>Parcial2</th>
+                            <th>Cont3</th>
+                            <th>Parcial3</th>
+                            <th>Promedio</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-body">
+                    </tbody>
+                </table>
+
+                <button class="btn-save" onclick="guardarNotas()">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <h4>Total Alumnos</h4>
+                        <div class="value" id="total-alumnos">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Aprobados</h4>
+                        <div class="value" id="aprobados">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Desaprobados</h4>
+                        <div class="value" id="desaprobados">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Promedio General</h4>
+                        <div class="value" id="promedio-general">0.0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo
+        const estudiantes = [
+            { codigo: '202310001', nombre: 'María González López' },
+            { codigo: '202310002', nombre: 'Carlos Mendoza Ruiz' },
+            { codigo: '202310003', nombre: 'Ana Torres Silva' },
+            { codigo: '202310004', nombre: 'Luis Ramírez Castro' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarPeriodoNotas();
+            const userName = localStorage.getItem("profesorActual") || "Profesor Principal";
+            document.getElementById('profesor-name').textContent = userName;
+        });
+
+        function verificarPeriodoNotas() {
+            const periodosGuardados = localStorage.getItem('periodosNotas');
+            const container = document.getElementById('periodo-info-container');
+            
+            if (!periodosGuardados) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+                        <div>
+                            <strong>No hay período habilitado para ingreso de notas</strong>
+                            <p>Por favor, contacte con secretaría para habilitar un período de ingreso de notas.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const periodos = JSON.parse(periodosGuardados).map(p => ({
+                ...p,
+                inicio: new Date(p.inicio),
+                fin: new Date(p.fin)
+            }));
+
+            const ahora = new Date();
+            const periodoActivo = periodos.find(p => ahora >= p.inicio && ahora <= p.fin);
+
+            if (!periodoActivo) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock" style="font-size: 2rem;"></i>
+                        <div>
+                            <strong>No es fecha para subir notas</strong>
+                            <p>El período de ingreso de notas no está activo en este momento.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const tiempoRestante = calcularTiempoRestante(periodoActivo.fin);
+            container.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+                    <div>
+                        <strong>Período de ingreso de notas activo</strong>
+                        <p>Puede ingresar notas hasta: ${formatearFecha(periodoActivo.fin)}</p>
+                        <p><strong>Tiempo restante:</strong> ${tiempoRestante}</p>
+                        ${periodoActivo.asignaturaNombre !== 'Todas las asignaturas' ? 
+                            `<p><strong>Asignatura:</strong> ${periodoActivo.asignaturaNombre}</p>` : ''}
+                        <p><strong>Tipo:</strong> ${periodoActivo.tipo}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('content-notas').style.display = 'block';
+        }
+
+        function cargarEstudiantes() {
+            const curso = document.getElementById('select-course').value;
+            if (!curso) {
+                document.getElementById('table-container').style.display = 'none';
+                return;
+            }
+
+            const tbody = document.getElementById('tabla-body');
+            tbody.innerHTML = estudiantes.map(est => `
+                <tr>
+                    <td>${est.codigo}</td>
+                    <td style="text-align: left;">${est.nombre}</td>
+                    <td><input type="number" min="0" max="20" step="0.5" value="0" onchange="calcularPromedio(this)"></td>
+                    <td><input type="number" min="0" max="20" step="0.5" value="0" onchange="calcularPromedio(this)"></td>
+                    <td><input type="number" min="0" max="20" step="0.5" value="0" onchange="calcularPromedio(this)"></td>
+                    <td><input type="number" min="0" max="20" step="0.5" value="0" onchange="calcularPromedio(this)"></td>
+                    <td><input type="number" min="0" max="20" step="0.5" value="0" onchange="calcularPromedio(this)"></td>
+                    <td><input type="number" min="0" max="20" step="0.5" value="0" onchange="calcularPromedio(this)"></td>
+                    <td class="promedio">0.0</td>
+                    <td class="estado">-</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('table-container').style.display = 'block';
+            actualizarEstadisticas();
+        }
+
+        function calcularPromedio(input) {
+            const row = input.closest('tr');
+            const inputs = row.querySelectorAll('input[type="number"]');
+            let suma = 0;
+            let count = 0;
+
+            inputs.forEach(inp => {
+                const valor = parseFloat(inp.value) || 0;
+                suma += valor;
+                count++;
+            });
+
+            const promedio = suma / count;
+            const promedioCell = row.querySelector('.promedio');
+            const estadoCell = row.querySelector('.estado');
+
+            promedioCell.textContent = promedio.toFixed(1);
+            
+            if (promedio >= 10.5) {
+                estadoCell.textContent = 'Aprobado';
+                estadoCell.className = 'estado aprobado';
+            } else {
+                estadoCell.textContent = 'Desaprobado';
+                estadoCell.className = 'estado desaprobado';
+            }
+
+            actualizarEstadisticas();
+        }
+
+        function actualizarEstadisticas() {
+            const rows = document.querySelectorAll('#tabla-body tr');
+            let total = rows.length;
+            let aprobados = 0;
+            let desaprobados = 0;
+            let sumaPromedios = 0;
+
+            rows.forEach(row => {
+                const estado = row.querySelector('.estado').textContent;
+                const promedio = parseFloat(row.querySelector('.promedio').textContent) || 0;
+                
+                if (estado === 'Aprobado') aprobados++;
+                if (estado === 'Desaprobado') desaprobados++;
+                sumaPromedios += promedio;
+            });
+
+            document.getElementById('total-alumnos').textContent = total;
+            document.getElementById('aprobados').textContent = aprobados;
+            document.getElementById('desaprobados').textContent = desaprobados;
+            document.getElementById('promedio-general').textContent = (sumaPromedios / total).toFixed(1);
+        }
+
+        function guardarNotas() {
+            alert('Notas guardadas exitosamente');
+        }
+
+        function calcularTiempoRestante(fechaFin) {
+            const ahora = new Date();
+            const diff = fechaFin - ahora;
+            
+            if (diff < 0) return 'Finalizado';
+            
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            if (dias > 0) return `${dias} días ${horas} horas`;
+            return `${horas} horas`;
+        }
+
+        function formatearFecha(fecha) {
+            return fecha.toLocaleString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
 </body>
 </html>
