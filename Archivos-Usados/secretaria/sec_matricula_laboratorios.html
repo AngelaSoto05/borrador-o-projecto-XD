@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula de Laboratorios - LUMINA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #1abc9c;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(52, 73, 94, 0.8);
+        }
+
+        .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            color: #3498db;
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(52, 73, 94, 0.5);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .user-details p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 15px;
+        }
+
+        .menu-title {
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            padding-left: 25px;
+        }
+
+        .menu-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid var(--primary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: var(--secondary);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb i {
+            font-size: 0.7rem;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-header h1 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .config-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+            font-size: 1.6rem;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid var(--success);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .status-card h4 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .status-card p {
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #e74c3c;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group label i {
+            color: var(--primary);
+        }
+        
+        .form-group input[type="datetime-local"],
+        .form-group select,
+        .form-group input[type="number"] {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--success) 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .periods-list {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .period-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .period-item:hover {
+            border-color: var(--success);
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .period-info h4 {
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .period-info p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .period-info p i {
+            width: 20px;
+            color: var(--success);
+        }
+        
+        .period-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .time-remaining {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px 20px;
+            font-size: 1rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #bdc3c7;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .logo h1, .user-details, .menu-title, .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .logo, .user-info, .menu-item {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .period-item {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .period-actions {
+                width: 100%;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-university"></i>
+            <h1>LUMINA SECRETARÍA</h1>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="user-details">
+                <h3 id="secretaria-name">Secretaría</h3>
+                <p>Sistema Universitario</p>
+            </div>
+        </div>
+        
+        <div class="menu">
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='panel_secretaria.html'">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>DASHBOARD</span>
+                </div>
+                <div class="menu-title">Panel Principal</div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='subida_datos.html'">
+                    <i class="fas fa-upload"></i>
+                    <span>SUBIDA DE DATOS</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='pesos_evaluacion.html'">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>PESOS DE EVALUACIÓN</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='sec_ver_ingreso_notas.html'">
+                    <i class="fas fa-edit"></i>
+                    <span>HABILITAR INGRESO DE NOTAS</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='sec_matricula_laboratorios.html'">
+                    <i class="fas fa-flask"></i>
+                    <span>MATRÍCULA LABORATORIOS</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='alumnos_asignatura.html'">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>ALUMNOS POR ASIGNATURA</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='docentes_asignatura.html'">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>DOCENTES POR ASIGNATURA</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='horarios_dia.html'">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>HORARIOS POR DÍA</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='reportes.html'">
+                    <i class="fas fa-file-download"></i>
+                    <span>DESCARGA DE REPORTES</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item" onclick="window.location.href='visualizacion.html'">
+                    <i class="fas fa-eye"></i>
+                    <span>VISUALIZACIÓN DE DATOS</span>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    
+    
+    <!-- Contenido -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Matrícula de Laboratorios</h1>
+            <div class="breadcrumb">
+                <span>Inicio</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Matrícula de Laboratorios</span>
+            </div>
+        </div>
+        
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-flask"></i>
+                Habilitar Matrícula de Laboratorios para Estudiantes
+            </h1>
+            <p>Configure los períodos de matrícula para que los estudiantes puedan inscribirse en los laboratorios disponibles</p>
+        </div>
+        
+        <div class="config-section">
+            <h2 class="section-title">
+                <i class="fas fa-cog"></i>
+                Estado Actual del Sistema
+            </h2>
+            
+            <div class="status-card">
+                <h4>
+                    <i class="fas fa-info-circle"></i>
+                    Estado de Matrícula de Laboratorios
+                </h4>
+                <p><strong>Estado:</strong> <span id="lab-status" class="status-badge status-inactive">Cerrado</span></p>
+                <p id="lab-time-info"><i class="fas fa-clock"></i> No hay período de matrícula activo</p>
+            </div>
+            
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Abrir Nuevo Período de Matrícula
+            </h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar-plus"></i>
+                        Fecha y Hora de Inicio
+                    </label>
+                    <input type="datetime-local" id="lab-inicio" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar-check"></i>
+                        Fecha y Hora de Fin
+                    </label>
+                    <input type="datetime-local" id="lab-fin" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-flask"></i>
+                        Laboratorio
+                    </label>
+                    <select id="lab-tipo">
+                        <option value="">Todos los laboratorios</option>
+                        <option value="LABFIS">Laboratorio de Teoria de la computación</option>
+                        <option value="LABQUIM">Laboratorio de Sistemas operativos</option>
+                        <option value="LABCOMP">Laboratorio de Ciencia de la Computación 1</option>
+                        <option value="LABBIO">Laboratorio de Base de datos 1</option>
+                        
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-users"></i>
+                        Cupos Disponibles
+                    </label>
+                    <input type="number" id="lab-cupos" min="1" value="20" required>
+                </div>
+            </div>
+            
+            <button class="btn-primary" id="btn-habilitar-lab">
+                <i class="fas fa-door-open"></i>
+                Abrir Período de Matrícula
+            </button>
+        </div>
+        
+        <div class="periods-list">
+            <h2 class="section-title">
+                <i class="fas fa-list-ul"></i>
+                Períodos de Matrícula Configurados
+            </h2>
+            <div id="lab-periodos-activos">
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay períodos de matrícula de laboratorios configurados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array para almacenar períodos activos
+        let labsActivos = [];
+        
+        // Cargar nombre de la secretaria
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = localStorage.getItem("usuarioActual") || "Secretaría Principal";
+            document.getElementById('secretaria-name').textContent = userName;
+            
+            // Cargar períodos guardados
+            const periodosGuardados = localStorage.getItem('periodosLaboratorios');
+            if (periodosGuardados) {
+                labsActivos = JSON.parse(periodosGuardados).map(p => ({
+                    ...p,
+                    inicio: new Date(p.inicio),
+                    fin: new Date(p.fin)
+                }));
+                actualizarPeriodosLabs();
+                actualizarEstadoLabs();
+            }
+        });
+        
+        // Evento para habilitar período
+        document.getElementById('btn-habilitar-lab').addEventListener('click', function() {
+            const inicio = document.getElementById('lab-inicio').value;
+            const fin = document.getElementById('lab-fin').value;
+            const tipo = document.getElementById('lab-tipo').value;
+            const cupos = document.getElementById('lab-cupos').value;
+            
+            if (!inicio || !fin) {
+                alert('Por favor, complete las fechas de inicio y fin');
+                return;
+            }
+            
+            if (!cupos || cupos < 1) {
+                alert('Por favor, ingrese un número válido de cupos');
+                return;
+            }
+            
+            const inicioDate = new Date(inicio);
+            const finDate = new Date(fin);
+            
+            if (finDate <= inicioDate) {
+                alert('La fecha de fin debe ser posterior a la fecha de inicio');
+                return;
+            }
+            
+            // Crear nuevo período
+            const periodo = {
+                id: Date.now(),
+                inicio: inicioDate,
+                fin: finDate,
+                laboratorio: tipo ? document.getElementById('lab-tipo').selectedOptions[0].text : 'Todos los laboratorios',
+                labCodigo: tipo || 'TODOS',
+                cupos: cupos,
+                activo: true
+            };
+            
+            labsActivos.push(periodo);
+            guardarPeriodos();
+            actualizarPeriodosLabs();
+            actualizarEstadoLabs();
+            
+            // Limpiar campos
+            document.getElementById('lab-inicio').value = '';
+            document.getElementById('lab-fin').value = '';
+            document.getElementById('lab-cupos').value = '30';
+            
+            alert('✓ Período de matrícula de laboratorios abierto exitosamente');
+        });
+        
+        function actualizarPeriodosLabs() {
+            const container = document.getElementById('lab-periodos-activos');
+            
+            if (labsActivos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No hay períodos de matrícula de laboratorios configurados</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const ahora = new Date();
+            container.innerHTML = labsActivos.map(periodo => {
+                const activo = ahora >= periodo.inicio && ahora <= periodo.fin;
+                const tiempoRestante = calcularTiempoRestante(periodo.fin);
+                
+                return `
+                    <div class="period-item">
+                        <div class="period-info">
+                            <h4><i class="fas fa-flask"></i> ${periodo.laboratorio}</h4>
+                            <p><i class="fas fa-users"></i> <strong>Cupos disponibles:</strong> ${periodo.cupos}</p>
+                            <p><i class="fas fa-calendar-alt"></i> <strong>Inicio:</strong> ${formatearFecha(periodo.inicio)}</p>
+                            <p><i class="fas fa-calendar-check"></i> <strong>Fin:</strong> ${formatearFecha(periodo.fin)}</p>
+                        </div>
+                        <div class="period-actions">
+                            <span class="status-badge ${activo ? 'status-active' : 'status-inactive'}">
+                                ${activo ? '● Abierto' : '○ Cerrado'}
+                            </span>
+                            ${activo ? `<span class="time-remaining"><i class="fas fa-hourglass-half"></i> ${tiempoRestante}</span>` : ''}
+                            <button class="btn-delete" onclick="eliminarPeriodoLab(${periodo.id})">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function actualizarEstadoLabs() {
+            const ahora = new Date();
+            const hayActivo = labsActivos.some(p => ahora >= p.inicio && ahora <= p.fin);
+            const statusSpan = document.getElementById('lab-status');
+            const timeInfo = document.getElementById('lab-time-info');
+            
+            if (hayActivo) {
+                statusSpan.className = 'status-badge status-active';
+                statusSpan.textContent = '● Abierto';
+                const activo = labsActivos.find(p => ahora >= p.inicio && ahora <= p.fin);
+                timeInfo.innerHTML = `<i class="fas fa-check-circle"></i> Matrícula abierta hasta: ${formatearFecha(activo.fin)}`;
+            } else {
+                statusSpan.className = 'status-badge status-inactive';
+                statusSpan.textContent = '○ Cerrado';
+                timeInfo.innerHTML = '<i class="fas fa-clock"></i> No hay período de matrícula activo';
+            }
+        }
+        
+        window.eliminarPeriodoLab = function(id) {
+            if (confirm('¿Está seguro de eliminar este período de matrícula?')) {
+                labsActivos = labsActivos.filter(p => p.id !== id);
+                guardarPeriodos();
+                actualizarPeriodosLabs();
+                actualizarEstadoLabs();
+            }
+        };
+        
+        function guardarPeriodos() {
+            localStorage.setItem('periodosLaboratorios', JSON.stringify(labsActivos));
+        }
+        
+        function calcularTiempoRestante(fechaFin) {
+            const ahora = new Date();
+            const diff = fechaFin - ahora;
+            
+            if (diff < 0) return 'Finalizado';
+            
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (dias > 0) return `${dias}d ${horas}h restantes`;
+            if (horas > 0) return `${horas}h ${minutos}m restantes`;
+            return `${minutos}m restantes`;
+        }
+        
+        function formatearFecha(fecha) {
+            return fecha.toLocaleString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Actualizar estados cada minuto
+        setInterval(() => {
+            actualizarPeriodosLabs();
+            actualizarEstadoLabs();
+        }, 60000);
+    </script>
+</body>
+</html>
