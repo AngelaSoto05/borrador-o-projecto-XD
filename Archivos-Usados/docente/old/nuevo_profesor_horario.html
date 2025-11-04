@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Horario - LUMINA STUDENT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Sidebar - Mismo estilo que el dashboard */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, #1a2530 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-details h3 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .logout-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .logout-btn:hover {
+            opacity: 1;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .menu-item.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb i {
+            font-size: 0.7rem;
+        }
+
+        .page-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .semester-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .semester-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--secondary);
+            background: white;
+            color: var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .semester-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .schedule-container {
+            overflow-x: auto;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .schedule-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .schedule-table td {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+            height: 100px;
+        }
+
+        .time-slot {
+            background: var(--light);
+            font-weight: 600;
+            text-align: center;
+            width: 100px;
+        }
+
+        .course-block {
+            background: #e8f4ff;
+            border-left: 4px solid var(--secondary);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .course-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .course-block.lab {
+            background: #e8f6f3;
+            border-left-color: var(--success);
+        }
+
+        .course-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .course-details {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .empty-slot {
+            background: #f9f9f9;
+            color: #95a5a6;
+            text-align: center;
+            font-style: italic;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .logo h1, .user-details, .menu-title, .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .user-info {
+                justify-content: center;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .semester-selector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>LUMINA STUDENT</h1>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-details">
+                <h3 id="userName">Estudiante</h3>
+                <p id="userCode">Código: ---</p>
+            </div>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+        
+        <div class="menu">
+            <div class="menu-section">
+                <a href="estudiante_dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>DASHBOARD</span>
+                </a>
+                <div class="menu-title">Panel Principal</div>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_horario.html" class="menu-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>MI HORARIO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_matricula.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>MATRÍCULA LABORATORIOS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_notas.html" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>MIS NOTAS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_contenido.html" class="menu-item">
+                    <i class="fas fa-book-open"></i>
+                    <span>CONTENIDO ACADÉMICO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="estudiante_perfil.html" class="menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>MI PERFIL</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Mi Horario Semanal</h1>
+            <div class="breadcrumb">
+                <span>Inicio</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Mi Horario</span>
+            </div>
+        </div>
+        
+        <div class="page-content">
+            <div class="section-title">
+                <span>Horario Académico - Semestre 2023-2</span>
+            </div>
+            
+            <div class="semester-selector">
+                <button class="semester-btn active">2023-2</button>
+                <button class="semester-btn">2024-1</button>
+                <button class="semester-btn">2024-2</button>
+            </div>
+            
+            <div class="schedule-container">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Lunes</th>
+                            <th>Martes</th>
+                            <th>Miércoles</th>
+                            <th>Jueves</th>
+                            <th>Viernes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time-slot">07:00 - 08:30</td>
+                            <td>
+                                <div class="course-block">
+                                    <div class="course-name">Programación I</div>
+                                    <div class="course-details">A-101 • Dr. Rodríguez</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block lab">
+                                    <div class="course-name">Laboratorio Programación</div>
+                                    <div class="course-details">Lab-201 • Ing. Martínez</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block">
+                                    <div class="course-name">Matemáticas</div>
+                                    <div class="course-details">A-102 • Dr. Torres</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="time-slot">08:30 - 10:00</td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block">
+                                    <div class="course-name">Física General</div>
+                                    <div class="course-details">A-103 • Dra. López</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block">
+                                    <div class="course-name">Inglés Técnico</div>
+                                    <div class="course-details">A-104 • Prof. Johnson</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                        </tr>
+                        <tr>
+                            <td class="time-slot">10:00 - 11:30</td>
+                            <td>
+                                <div class="course-block lab">
+                                    <div class="course-name">Laboratorio Física</div>
+                                    <div class="course-details">Lab-301 • Dr. Torres</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block">
+                                    <div class="course-name">Programación I</div>
+                                    <div class="course-details">A-101 • Dr. Rodríguez</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                        </tr>
+                        <tr>
+                            <td class="time-slot">11:30 - 13:00</td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block">
+                                    <div class="course-name">Física General</div>
+                                    <div class="course-details">A-103 • Dra. López</div>
+                                </div>
+                            </td>
+                            <td class="empty-slot">Libre</td>
+                            <td class="empty-slot">Libre</td>
+                            <td>
+                                <div class="course-block lab">
+                                    <div class="course-name">Laboratorio Química</div>
+                                    <div class="course-details">Lab-401 • Dra. Patricia</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar información del estudiante
+        document.addEventListener('DOMContentLoaded', function() {
+            const estudiante = JSON.parse(localStorage.getItem('estudianteActual')) || {
+                nombre: 'Ángela Soto Huerta',
+                codigo: '20212163',
+                iniciales: 'AS'
+            };
+
+            document.getElementById('userName').textContent = estudiante.nombre;
+            document.getElementById('userCode').textContent = `Código: ${estudiante.codigo}`;
+            document.getElementById('userAvatar').textContent = estudiante.iniciales;
+        });
+
+        // Manejar selector de semestre
+        document.querySelectorAll('.semester-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.semester-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                alert(`Horario cargado para el semestre ${this.textContent}`);
+            });
+        });
+
+        // Manejar cierre de sesión
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+                localStorage.removeItem('estudianteActual');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

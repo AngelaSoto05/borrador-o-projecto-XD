@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencia Desbloqueada - LUMINA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #1abc9c;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(52, 73, 94, 0.8);
+        }
+
+        .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            color: #3498db;
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(52, 73, 94, 0.5);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .user-details p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 15px;
+        }
+
+        .menu-title {
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            padding-left: 25px;
+        }
+
+        .menu-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid var(--primary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: var(--secondary);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb i {
+            font-size: 0.7rem;
+        }
+
+        /* Estilos específicos para asistencia desbloqueada */
+        .unlocked-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .unlocked-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .unlocked-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .unlocked-icon {
+            color: var(--success);
+            font-size: 1.8rem;
+        }
+
+        .location-info {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .location-info i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .attendance-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .attendance-controls select, .attendance-controls input {
+            padding: 10px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            background: white;
+            min-width: 200px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .attendance-table th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .attendance-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .attendance-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .present {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .absent {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .btn-mark-attendance {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-mark-attendance:hover {
+            background: #27ae60;
+        }
+
+        .student-view {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-view h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: #f8f9fa;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: #7f8c8d;
+        }
+
+        .student-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .logo h1, .user-details, .menu-title, .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .user-info {
+                justify-content: center;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .attendance-controls {
+                flex-direction: column;
+            }
+            
+            .attendance-controls select, .attendance-controls input {
+                width: 100%;
+            }
+            
+            .student-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-university"></i>
+            <h1>LUMINA PROFESOR</h1>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="user-details">
+                <h3 id="profesor-name">Profesor</h3>
+                <p>IP: 192.168.1.45 (Presencial)</p>
+            </div>
+        </div>
+        
+        <div class="menu">
+            <div class="menu-section">
+                <a href="index.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>DASHBOARD</span>
+                </a>
+                <div class="menu-title">Panel Principal</div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-item active">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>REGISTRAR ASISTENCIA</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <a href="menu-corregido.html" class="menu-item">
+                    <i class="fas fa-edit"></i>
+                    <span>INGRESAR NOTAS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="menu-corregido.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>VER HORARIO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="menu-corregido.html" class="menu-item">
+                    <i class="fas fa-door-open"></i>
+                    <span>DISPONIBILIDAD DE AULAS</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="menu-corregido.html" class="menu-item">
+                    <i class="fas fa-upload"></i>
+                    <span>SUBIR SÍLABOS / CONTENIDO</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <a href="menu-corregido.html" class="menu-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>REPORTES PDF</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Registrar Asistencia</h1>
+            <div class="breadcrumb">
+                <a href="index.html" style="color: #7f8c8d; text-decoration: none;">Inicio</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Asistencia Desbloqueada</span>
+            </div>
+        </div>
+        
+        <div class="unlocked-container">
+            <div class="unlocked-header">
+                <h2 class="unlocked-title">
+                    <i class="fas fa-unlock unlocked-icon"></i>
+                    Asistencia Habilitada
+                </h2>
+                <div class="status-badge" style="background: var(--success); color: white; padding: 8px 15px; border-radius: 20px; font-weight: 600;">
+                    <i class="fas fa-check-circle"></i> Geolocalización Activa
+                </div>
+            </div>
+            
+            <div class="location-info">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <strong>Ubicación verificada:</strong> Campus Central - Edificio A, Aula 302
+                    <br>
+                    <small>Coordenadas: -12.0464, -77.0428 | Precisión: 15m</small>
+                </div>
+            </div>
+            
+            <div class="attendance-controls">
+                <select id="select-course">
+                    <option value="">Seleccionar Curso</option>
+                    <option value="MAT101" selected>MAT101 - Matemática Aplicada</option>
+                    <option value="ING102">ING102 - Inglés I</option>
+                    <option value="CC201">CC201 - Ciencia de la Computación I</option>
+                </select>
+                
+                <select id="select-group">
+                    <option value="">Seleccionar Grupo</option>
+                    <option value="A" selected>Grupo A</option>
+                    <option value="B">Grupo B</option>
+                    <option value="C">Grupo C</option>
+                </select>
+                
+                <input type="date" id="attendance-date" value="2023-10-15">
+            </div>
+            
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Estudiante</th>
+                        <th>Asistencia</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>202310001</td>
+                        <td>María González López</td>
+                        <td class="present">Presente</td>
+                        <td><button class="btn-mark-attendance">Cambiar</button></td>
+                    </tr>
+                    <tr>
+                        <td>202310002</td>
+                        <td>Carlos Mendoza Ruiz</td>
+                        <td class="absent">Ausente</td>
+                        <td><button class="btn-mark-attendance">Cambiar</button></td>
+                    </tr>
+                    <tr>
+                        <td>202310003</td>
+                        <td>Ana Torres Silva</td>
+                        <td class="present">Presente</td>
+                        <td><button class="btn-mark-attendance">Cambiar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="student-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Asistencia
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> Sincronizar con Servidor
+                </button>
+            </div>
+        </div>
+        
+        <div class="student-view">
+            <h2>
+                <i class="fas fa-qrcode"></i>
+                Vista para Estudiantes
+            </h2>
+            <p>Los estudiantes pueden registrar su asistencia escaneando el código QR o accediendo al enlace proporcionado.</p>
+            
+            <div class="qr-code">
+                <div class="qr-placeholder">
+                    <div>
+                        <i class="fas fa-qrcode" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                        <div>Código QR de Asistencia</div>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #7f8c8d;">Código válido por: 15 minutos</p>
+            </div>
+            
+            <div class="student-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Generar Nuevo Código
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-link"></i> Copiar Enlace
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar nombre del profesor
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = localStorage.getItem("profesorActual") || "Profesor Principal";
+            document.getElementById('profesor-name').textContent = userName;
+            
+            // Funcionalidad para marcar asistencia
+            document.querySelectorAll('.btn-mark-attendance').forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const attendanceCell = row.querySelector('td:nth-child(3)');
+                    
+                    if (attendanceCell.classList.contains('present')) {
+                        attendanceCell.classList.remove('present');
+                        attendanceCell.classList.add('absent');
+                        attendanceCell.textContent = 'Ausente';
+                    } else {
+                        attendanceCell.classList.remove('absent');
+                        attendanceCell.classList.add('present');
+                        attendanceCell.textContent = 'Presente';
+                    }
+                    
+                    // Mostrar mensaje de confirmación
+                    const studentName = row.querySelector('td:nth-child(2)').textContent;
+                    alert(`Asistencia actualizada para ${studentName}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
