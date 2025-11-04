@@ -7,15 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
+            --primary: #3498db;
+            --secondary: #2c3e50;
             --accent: #9b59b6;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
             --success: #2ecc71;
             --warning: #f39c12;
             --danger: #e74c3c;
-            --sidebar-width: 250px;
+            --sidebar-width: 280px;
         }
 
         * {
@@ -28,247 +26,109 @@
         body {
             display: flex;
             min-height: 100vh;
-            background-color: #f5f7fa;
-            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        /* Sidebar - Mismo estilo que el dashboard */
         .sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(180deg, var(--primary) 0%, #1a2530 100%);
+            background: rgba(44, 62, 80, 0.95);
             color: white;
             height: 100vh;
             position: fixed;
             overflow-y: auto;
-            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
 
         .logo {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
 
         .logo h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
-        }
-
-        .logo i {
-            color: var(--secondary);
-            font-size: 1.8rem;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .user-info {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .user-details h3 {
-            font-size: 1rem;
-            margin-bottom: 3px;
-        }
-
-        .user-details p {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .logout-btn {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-
-        .logout-btn:hover {
-            opacity: 1;
-        }
-
-        .menu {
-            padding: 20px 0;
-        }
-
-        .menu-section {
-            margin-bottom: 10px;
-        }
-
-        .menu-title {
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            opacity: 0.7;
-            letter-spacing: 1px;
-        }
-
         .menu-item {
-            padding: 12px 20px;
+            padding: 14px 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 3px solid transparent;
-            text-decoration: none;
             color: white;
+            text-decoration: none;
         }
 
         .menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-left: 3px solid var(--secondary);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .menu-item.active {
-            background-color: rgba(52, 152, 219, 0.2);
-            border-left: 3px solid var(--secondary);
-        }
-
-        .menu-item i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
-            padding: 20px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
         .header h1 {
-            color: var(--primary);
-            font-size: 1.8rem;
+            color: var(--secondary);
+            font-size: 2rem;
         }
 
-        .breadcrumb {
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            gap: 15px;
+            font-size: 1.1rem;
         }
 
-        .breadcrumb i {
-            font-size: 0.7rem;
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
         }
 
         .page-content {
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
         .section-title {
             font-size: 1.3rem;
-            color: var(--primary);
+            color: var(--secondary);
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background-color: var(--secondary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px);
-        }
-
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background-color: #e67e22;
-            transform: translateY(-2px);
-        }
-
-        .search-box {
-            display: flex;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 12px 15px;
-            border: none;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .search-box button {
-            padding: 12px 20px;
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .search-box button:hover {
-            background-color: #2980b9;
+            border-bottom: 2px solid #e0e0e0;
+            font-weight: 600;
         }
 
         .labs-grid {
@@ -279,7 +139,7 @@
         }
 
         .lab-card {
-            background: white;
+            background: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -289,19 +149,11 @@
 
         .lab-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
         }
 
         .lab-card.available {
             border-left: 4px solid var(--success);
-        }
-
-        .lab-card.full {
-            border-left: 4px solid var(--danger);
-        }
-
-        .lab-card.waiting {
-            border-left: 4px solid var(--warning);
         }
 
         .lab-header {
@@ -313,7 +165,7 @@
 
         .lab-name {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--secondary);
             font-size: 1.1rem;
         }
 
@@ -329,16 +181,6 @@
             color: var(--success);
         }
 
-        .status-full {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: var(--danger);
-        }
-
-        .status-waiting {
-            background-color: rgba(243, 156, 18, 0.2);
-            color: var(--warning);
-        }
-
         .lab-details {
             margin-bottom: 15px;
         }
@@ -352,40 +194,42 @@
             color: #7f8c8d;
         }
 
-        .capacity-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #ecf0f1;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
         }
 
-        .capacity-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s;
-        }
-
-        .capacity-low {
+        .btn-success {
             background-color: var(--success);
+            color: white;
         }
 
-        .capacity-medium {
-            background-color: var(--warning);
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
         }
 
-        .capacity-high {
+        .btn-danger {
             background-color: var(--danger);
+            color: white;
         }
 
-        .lab-actions {
-            display: flex;
-            gap: 10px;
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
         }
 
         .enrollment-info {
-            background: var(--light);
+            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
@@ -395,40 +239,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 15px;
             border-bottom: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
         .enrollment-item:last-child {
             border-bottom: none;
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-                overflow: visible;
-            }
-            
-            .logo h1, .user-details, .menu-title, .menu-item span {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 70px;
-            }
-            
-            .logo {
-                justify-content: center;
-            }
-            
-            .user-info {
-                justify-content: center;
-            }
-            
-            .menu-item {
-                justify-content: center;
-                padding: 15px 0;
-            }
+            margin-bottom: 0;
         }
 
         @media (max-width: 768px) {
@@ -436,405 +256,302 @@
                 grid-template-columns: 1fr;
             }
             
-            .lab-actions {
+            .enrollment-item {
                 flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            <h1>LUMINA STUDENT</h1>
+            <h1>LUMINA ESTUDIANTE</h1>
         </div>
-        
         <div class="user-info">
-            <div class="user-avatar" id="userAvatar">A</div>
-            <div class="user-details">
-                <h3 id="userName">Estudiante</h3>
-                <p id="userCode">Código: ---</p>
-            </div>
-            <button class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
+            <h3 id="estudiante-name">Estudiante</h3>
         </div>
-        
         <div class="menu">
-            <div class="menu-section">
-                <a href="estudiante_dashboard.html" class="menu-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>DASHBOARD</span>
-                </a>
-                <div class="menu-title">Panel Principal</div>
-            </div>
-            
-            <div class="menu-section">
-                <a href="estudiante_horario.html" class="menu-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>MI HORARIO</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <a href="estudiante_matricula.html" class="menu-item active">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>MATRÍCULA LABORATORIOS</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <a href="estudiante_notas.html" class="menu-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>MIS NOTAS</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <a href="estudiante_contenido.html" class="menu-item">
-                    <i class="fas fa-book-open"></i>
-                    <span>CONTENIDO ACADÉMICO</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <a href="estudiante_perfil.html" class="menu-item">
-                    <i class="fas fa-user"></i>
-                    <span>MI PERFIL</span>
-                </a>
-            </div>
+            <a href="estudiante_perfil.html" class="menu-item">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver al Panel</span>
+            </a>
         </div>
     </div>
     
-    <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <h1>Matrícula de Laboratorios</h1>
-            <div class="breadcrumb">
-                <span>Inicio</span>
-                <i class="fas fa-chevron-right"></i>
-                <span>Matrícula Laboratorios</span>
-            </div>
-        </div>
-        
-        <div class="page-content">
-            <div class="section-title">
-                <span>Laboratorios Disponibles - Semestre 2023-2</span>
-            </div>
-            
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar laboratorio por nombre, código o docente...">
-                <button onclick="buscarLaboratorios()">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            
-            <div class="labs-grid" id="labsContainer">
-                <!-- Los laboratorios se cargarán aquí dinámicamente -->
-                <div class="loading-message">Cargando laboratorios disponibles...</div>
-            </div>
+            <h1><i class="fas fa-flask"></i> Matrícula de Laboratorios</h1>
         </div>
 
-        <div class="page-content">
-            <div class="section-title">
-                <span>Mis Laboratorios Matriculados</span>
+        <div id="periodo-info-container"></div>
+
+        <div id="content-matricula">
+            <div class="page-content">
+                <div class="section-title">
+                    <i class="fas fa-list"></i> Laboratorios Disponibles
+                </div>
+                
+                <div class="labs-grid" id="labsContainer">
+                    <div class="lab-card available">
+                        <div class="lab-header">
+                            <div class="lab-name">Lab. Teoría de la Computación</div>
+                            <div class="lab-status status-available">Disponible</div>
+                        </div>
+                        <div class="lab-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span><strong>Docente:</strong> Ing. Carlos López</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span><strong>Horario:</strong> Lun 08:00-10:00</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-users"></i>
+                                <span><strong>Cupos:</strong> 15/25</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="matricular(1)">
+                            <i class="fas fa-plus"></i> Matricular
+                        </button>
+                    </div>
+
+                    <div class="lab-card available">
+                        <div class="lab-header">
+                            <div class="lab-name">Lab. Sistemas Operativos</div>
+                            <div class="lab-status status-available">Disponible</div>
+                        </div>
+                        <div class="lab-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span><strong>Docente:</strong> Dra. Ana Martínez</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span><strong>Horario:</strong> Mar 10:00-12:00</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-users"></i>
+                                <span><strong>Cupos:</strong> 18/30</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="matricular(2)">
+                            <i class="fas fa-plus"></i> Matricular
+                        </button>
+                    </div>
+
+                    <div class="lab-card available">
+                        <div class="lab-header">
+                            <div class="lab-name">Lab. Base de Datos 1</div>
+                            <div class="lab-status status-available">Disponible</div>
+                        </div>
+                        <div class="lab-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span><strong>Docente:</strong> Ing. Roberto Silva</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span><strong>Horario:</strong> Mié 14:00-16:00</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-users"></i>
+                                <span><strong>Cupos:</strong> 20/25</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="matricular(3)">
+                            <i class="fas fa-plus"></i> Matricular
+                        </button>
+                    </div>
+                </div>
             </div>
-            
-            <div class="enrollment-info" id="enrolledLabs">
-                <!-- Los laboratorios matriculados se cargarán aquí -->
-                <div class="loading-message">Cargando laboratorios matriculados...</div>
+
+            <div class="page-content">
+                <div class="section-title">
+                    <i class="fas fa-check-circle"></i> Mis Laboratorios Matriculados
+                </div>
+                
+                <div class="enrollment-info" id="enrolledLabs">
+                    <div style="text-align: center; color: #7f8c8d; padding: 20px;">
+                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                        <p>No estás matriculado en ningún laboratorio</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api/estudiantes';
-        let laboratoriosDisponibles = [];
         let laboratoriosMatriculados = [];
 
-        // Cargar información del estudiante
         document.addEventListener('DOMContentLoaded', function() {
-            const estudiante = JSON.parse(localStorage.getItem('estudianteActual')) || {
-                nombre: 'Ángela Soto Huerta',
-                codigo: '20212163',
-                iniciales: 'AS',
-                id: 1
-            };
-
-            document.getElementById('userName').textContent = estudiante.nombre;
-            document.getElementById('userCode').textContent = `Código: ${estudiante.codigo}`;
-            document.getElementById('userAvatar').textContent = estudiante.iniciales;
-
-            // Cargar datos iniciales
-            cargarLaboratoriosDisponibles();
-            cargarLaboratoriosMatriculados();
+            const userName = localStorage.getItem("estudianteActual") || "Estudiante";
+            document.getElementById('estudiante-name').textContent = userName;
+            verificarPeriodoMatricula();
         });
 
-        // Función para cargar laboratorios disponibles desde la API
-        async function cargarLaboratoriosDisponibles() {
-            try {
-                const response = await fetch(`${API_URL}/laboratorios-disponibles`);
-                if (!response.ok) throw new Error('Error al cargar laboratorios');
-                
-                laboratoriosDisponibles = await response.json();
-                mostrarLaboratoriosDisponibles();
-            } catch (error) {
-                console.error('Error:', error);
-                mostrarLaboratoriosEjemplo(); // Datos de ejemplo si falla la API
-            }
-        }
-
-        // Función para cargar laboratorios matriculados desde la API
-        async function cargarLaboratoriosMatriculados() {
-            try {
-                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
-                const response = await fetch(`${API_URL}/laboratorios-matriculados/${estudiante.id}`);
-                if (!response.ok) throw new Error('Error al cargar laboratorios matriculados');
-                
-                laboratoriosMatriculados = await response.json();
-                mostrarLaboratoriosMatriculados();
-            } catch (error) {
-                console.error('Error:', error);
-                mostrarLaboratoriosMatriculadosEjemplo(); // Datos de ejemplo
-            }
-        }
-
-        // Función para mostrar laboratorios disponibles
-        function mostrarLaboratoriosDisponibles(laboratorios = laboratoriosDisponibles) {
-            const container = document.getElementById('labsContainer');
+        function verificarPeriodoMatricula() {
+            const periodosGuardados = localStorage.getItem('periodosLaboratorios');
+            const container = document.getElementById('periodo-info-container');
+            const contentMatricula = document.getElementById('content-matricula');
             
-            if (laboratorios.length === 0) {
-                container.innerHTML = '<div class="no-results">No se encontraron laboratorios disponibles</div>';
+            // OCULTAR CONTENIDO POR DEFECTO
+            contentMatricula.style.display = 'none';
+            
+            if (!periodosGuardados) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+                        <div>
+                            <strong>No están habilitadas las matrículas</strong>
+                            <p>El período de matrícula de laboratorios no está activo en este momento. Por favor, espera a que secretaría habilite el período de matrícula.</p>
+                            <p style="margin-top: 15px;">
+                                <a href="estudiante_perfil.html" style="color: #856404; text-decoration: underline;">
+                                    ← Volver al Panel Principal
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = laboratorios.map(lab => `
-                <div class="lab-card ${obtenerClaseEstado(lab)}">
-                    <div class="lab-header">
-                        <div class="lab-name">${lab.nombre}</div>
-                        <div class="lab-status ${obtenerClaseStatus(lab)}">
-                            ${obtenerTextoEstado(lab)}
+            const periodos = JSON.parse(periodosGuardados).map(p => ({
+                ...p,
+                inicio: new Date(p.inicio),
+                fin: new Date(p.fin)
+            }));
+
+            const ahora = new Date();
+            const periodoActivo = periodos.find(p => ahora >= p.inicio && ahora <= p.fin);
+
+            if (!periodoActivo) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock" style="font-size: 2rem;"></i>
+                        <div>
+                            <strong>No están habilitadas las matrículas</strong>
+                            <p>El período de matrícula de laboratorios no está activo en este momento.</p>
+                            <p style="margin-top: 15px;">
+                                <a href="estudiante_perfil.html" style="color: #856404; text-decoration: underline;">
+                                    ← Volver al Panel Principal
+                                </a>
+                            </p>
                         </div>
                     </div>
-                    <div class="lab-details">
-                        <div class="detail-item">
-                            <i class="fas fa-code"></i>
-                            <span><strong>Código:</strong> ${lab.codigo}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-user-tie"></i>
-                            <span><strong>Docente:</strong> ${lab.docente}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-clock"></i>
-                            <span><strong>Horario:</strong> ${lab.horario}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span><strong>Ubicación:</strong> ${lab.ubicacion}</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-users"></i>
-                            <span><strong>Cupos:</strong> ${lab.inscritos}/${lab.capacidad}</span>
-                        </div>
-                    </div>
-                    <div class="capacity-bar">
-                        <div class="capacity-fill ${obtenerClaseCapacidad(lab)}" 
-                             style="width: ${(lab.inscritos / lab.capacidad) * 100}%"></div>
-                    </div>
-                    <div class="lab-actions">
-                        <button class="btn ${lab.inscritos < lab.capacidad ? 'btn-success' : 'btn-warning'}" 
-                                onclick="matricularLaboratorio(${lab.id})"
-                                ${lab.inscritos >= lab.capacidad ? 'disabled' : ''}>
-                            <i class="fas fa-plus"></i>
-                            ${lab.inscritos < lab.capacidad ? 'Matricular' : 'Lista de Espera'}
-                        </button>
-                        <button class="btn btn-primary" onclick="verDetallesLaboratorio(${lab.id})">
-                            <i class="fas fa-info-circle"></i> Detalles
-                        </button>
+                `;
+                return;
+            }
+
+            const tiempoRestante = calcularTiempoRestante(periodoActivo.fin);
+            container.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+                    <div>
+                        <strong>¡Período de matrícula activo!</strong>
+                        <p>Puedes matricularte hasta: ${formatearFecha(periodoActivo.fin)}</p>
+                        <p><strong>Tiempo restante:</strong> ${tiempoRestante}</p>
+                        ${periodoActivo.laboratorio !== 'Todos los laboratorios' ? 
+                            `<p><strong>Laboratorio:</strong> ${periodoActivo.laboratorio}</p>` : 
+                            '<p><strong>Laboratorios:</strong> Todos disponibles</p>'}
+                        <p><strong>Cupos disponibles:</strong> ${periodoActivo.cupos} por laboratorio</p>
                     </div>
                 </div>
-            `).join('');
+            `;
+
+            // MOSTRAR CONTENIDO SOLO SI HAY PERÍODO ACTIVO
+            contentMatricula.style.display = 'block';
         }
 
-        // Función para mostrar laboratorios matriculados
-        function mostrarLaboratoriosMatriculados() {
+        function matricular(labId) {
+            const labNombres = {
+                1: 'Lab. Teoría de la Computación',
+                2: 'Lab. Sistemas Operativos',
+                3: 'Lab. Base de Datos 1'
+            };
+
+            if (laboratoriosMatriculados.includes(labId)) {
+                alert('⚠️ Ya estás matriculado en este laboratorio');
+                return;
+            }
+
+            if (confirm(`¿Deseas matricularte en ${labNombres[labId]}?`)) {
+                laboratoriosMatriculados.push(labId);
+                actualizarMatriculados();
+                alert('✅ ¡Matrícula realizada exitosamente!');
+            }
+        }
+
+        function actualizarMatriculados() {
             const container = document.getElementById('enrolledLabs');
             
             if (laboratoriosMatriculados.length === 0) {
-                container.innerHTML = '<div class="no-results">No estás matriculado en ningún laboratorio</div>';
+                container.innerHTML = `
+                    <div style="text-align: center; color: #7f8c8d; padding: 20px;">
+                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                        <p>No estás matriculado en ningún laboratorio</p>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = laboratoriosMatriculados.map(lab => `
-                <div class="enrollment-item">
-                    <div>
-                        <strong>${lab.nombre}</strong> (${lab.codigo})
-                        <div style="font-size: 0.8rem; color: #7f8c8d;">
-                            ${lab.docente} • ${lab.horario} • ${lab.ubicacion}
+            const labInfo = {
+                1: { nombre: 'Lab. Teoría de la Computación', docente: 'Ing. Carlos López', horario: 'Lun 08:00-10:00' },
+                2: { nombre: 'Lab. Sistemas Operativos', docente: 'Dra. Ana Martínez', horario: 'Mar 10:00-12:00' },
+                3: { nombre: 'Lab. Base de Datos 1', docente: 'Ing. Roberto Silva', horario: 'Mié 14:00-16:00' }
+            };
+
+            container.innerHTML = laboratoriosMatriculados.map(id => {
+                const lab = labInfo[id];
+                return `
+                    <div class="enrollment-item">
+                        <div>
+                            <strong>${lab.nombre}</strong>
+                            <div style="font-size: 0.85rem; color: #7f8c8d; margin-top: 5px;">
+                                <i class="fas fa-user-tie"></i> ${lab.docente} • 
+                                <i class="fas fa-clock"></i> ${lab.horario}
+                            </div>
                         </div>
+                        <button class="btn btn-danger" onclick="cancelarMatricula(${id})">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
                     </div>
-                    <button class="btn btn-danger" onclick="cancelarMatricula(${lab.id})">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // Función para matricular en laboratorio
-        async function matricularLaboratorio(labId) {
-            try {
-                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
-                const response = await fetch(`${API_URL}/matricular-laboratorio`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        estudiante_id: estudiante.id,
-                        laboratorio_id: labId
-                    })
-                });
-
-                if (response.ok) {
-                    alert('Matrícula realizada exitosamente');
-                    cargarLaboratoriosDisponibles();
-                    cargarLaboratoriosMatriculados();
-                } else {
-                    const error = await response.json();
-                    alert(`Error: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al realizar la matrícula');
+        function cancelarMatricula(labId) {
+            if (confirm('¿Estás seguro de cancelar esta matrícula?')) {
+                laboratoriosMatriculados = laboratoriosMatriculados.filter(id => id !== labId);
+                actualizarMatriculados();
+                alert('✅ Matrícula cancelada exitosamente');
             }
         }
 
-        // Función para cancelar matrícula
-        async function cancelarMatricula(labId) {
-            if (!confirm('¿Está seguro de que desea cancelar esta matrícula?')) return;
-
-            try {
-                const estudiante = JSON.parse(localStorage.getItem('estudianteActual'));
-                const response = await fetch(`${API_URL}/cancelar-matricula`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        estudiante_id: estudiante.id,
-                        laboratorio_id: labId
-                    })
-                });
-
-                if (response.ok) {
-                    alert('Matrícula cancelada exitosamente');
-                    cargarLaboratoriosDisponibles();
-                    cargarLaboratoriosMatriculados();
-                } else {
-                    const error = await response.json();
-                    alert(`Error: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cancelar la matrícula');
-            }
+        function calcularTiempoRestante(fechaFin) {
+            const ahora = new Date();
+            const diff = fechaFin - ahora;
+            
+            if (diff < 0) return 'Finalizado';
+            
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            if (dias > 0) return `${dias} días ${horas} horas`;
+            return `${horas} horas`;
         }
 
-        // Funciones auxiliares
-        function obtenerClaseEstado(lab) {
-            if (lab.inscritos < lab.capacidad) return 'available';
-            if (lab.inscritos >= lab.capacidad && lab.lista_espera) return 'waiting';
-            return 'full';
+        function formatearFecha(fecha) {
+            return fecha.toLocaleString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
-
-        function obtenerClaseStatus(lab) {
-            if (lab.inscritos < lab.capacidad) return 'status-available';
-            if (lab.inscritos >= lab.capacidad && lab.lista_espera) return 'status-waiting';
-            return 'status-full';
-        }
-
-        function obtenerTextoEstado(lab) {
-            if (lab.inscritos < lab.capacidad) return 'Disponible';
-            if (lab.inscritos >= lab.capacidad && lab.lista_espera) return 'Lista de Espera';
-            return 'Completo';
-        }
-
-        function obtenerClaseCapacidad(lab) {
-            const porcentaje = (lab.inscritos / lab.capacidad) * 100;
-            if (porcentaje < 70) return 'capacity-low';
-            if (porcentaje < 90) return 'capacity-medium';
-            return 'capacity-high';
-        }
-
-        function buscarLaboratorios() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = laboratoriosDisponibles.filter(lab => 
-                lab.nombre.toLowerCase().includes(searchTerm) ||
-                lab.codigo.toLowerCase().includes(searchTerm) ||
-                lab.docente.toLowerCase().includes(searchTerm)
-            );
-            mostrarLaboratoriosDisponibles(filtered);
-        }
-
-        function verDetallesLaboratorio(labId) {
-            const lab = laboratoriosDisponibles.find(l => l.id === labId);
-            if (lab) {
-                alert(`Detalles del laboratorio:\n\nNombre: ${lab.nombre}\nCódigo: ${lab.codigo}\nDocente: ${lab.docente}\nHorario: ${lab.horario}\nUbicación: ${lab.ubicacion}\nCupos: ${lab.inscritos}/${lab.capacidad}`);
-            }
-        }
-
-        // Datos de ejemplo para pruebas (se eliminarán cuando la API esté disponible)
-        function mostrarLaboratoriosEjemplo() {
-            laboratoriosDisponibles = [
-                {
-                    id: 1,
-                    nombre: 'Laboratorio de Programación I',
-                    codigo: 'LAB-PROG-101',
-                    docente: 'Ing. Laura Martínez',
-                    horario: 'Lunes 07:00-08:30',
-                    ubicacion: 'Lab-201',
-                    capacidad: 30,
-                    inscritos: 25,
-                    lista_espera: true
-                },
-                {
-                    id: 2,
-                    nombre: 'Laboratorio de Física',
-                    codigo: 'LAB-FIS-201',
-                    docente: 'Dr. Carlos Torres',
-                    horario: 'Martes 10:00-11:30',
-                    ubicacion: 'Lab-301',
-                    capacidad: 25,
-                    inscritos: 15,
-                    lista_espera: false
-                }
-            ];
-            mostrarLaboratoriosDisponibles();
-        }
-
-        function mostrarLaboratoriosMatriculadosEjemplo() {
-            laboratoriosMatriculados = [
-                {
-                    id: 3,
-                    nombre: 'Laboratorio de Química',
-                    codigo: 'LAB-QUIM-301',
-                    docente: 'Dra. Ana López',
-                    horario: 'Viernes 11:30-13:00',
-                    ubicacion: 'Lab-401'
-                }
-            ];
-            mostrarLaboratoriosMatriculados();
-        }
-
-        // Manejar cierre de sesión
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
-                localStorage.removeItem('estudianteActual');
-                window.location.href = 'index.html';
-            }
-        });
     </script>
 </body>
 </html>
