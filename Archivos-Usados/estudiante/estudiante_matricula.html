@@ -133,7 +133,7 @@
 
         .labs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
@@ -145,6 +145,7 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             border: 2px solid transparent;
             transition: all 0.3s;
+            border-left: 4px solid var(--accent);
         }
 
         .lab-card:hover {
@@ -152,50 +153,100 @@
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
         }
 
-        .lab-card.available {
+        .lab-card.enrolled {
             border-left: 4px solid var(--success);
-        }
-
-        .lab-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
+            background: #e8f5e9;
         }
 
         .lab-name {
             font-weight: 600;
             color: var(--secondary);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .lab-status {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-available {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: var(--success);
-        }
-
-        .lab-details {
+        .select-wrapper {
+            position: relative;
             margin-bottom: 15px;
+        }
+
+        .select-wrapper label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .select-wrapper select {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            color: var(--secondary);
+        }
+
+        .select-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .select-wrapper::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-top: 12px;
+            pointer-events: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .option-details {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            min-height: 120px;
+        }
+
+        .option-details.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #95a5a6;
+            font-style: italic;
         }
 
         .detail-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .detail-item i {
+            color: var(--primary);
+            width: 20px;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -203,8 +254,10 @@
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
+            width: 100%;
         }
 
         .btn-success {
@@ -212,10 +265,16 @@
             color: white;
         }
 
-        .btn-success:hover {
+        .btn-success:hover:not(:disabled) {
             background-color: #27ae60;
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-success:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-danger {
@@ -239,16 +298,39 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
+            padding: 20px;
             border-bottom: 1px solid #e0e0e0;
             background: white;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--success);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .enrollment-item:last-child {
             border-bottom: none;
             margin-bottom: 0;
+        }
+
+        .option-badge {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .enrolled-badge {
+            background: var(--success);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -283,6 +365,7 @@
     <div class="main-content">
         <div class="header">
             <h1><i class="fas fa-flask"></i> Matrícula de Laboratorios</h1>
+            <p style="color: #7f8c8d; margin-top: 10px;">Selecciona una opción (A o B) para cada curso</p>
         </div>
 
         <div id="periodo-info-container"></div>
@@ -293,75 +376,84 @@
                     <i class="fas fa-list"></i> Laboratorios Disponibles
                 </div>
                 
-                <div class="labs-grid" id="labsContainer">
-                    <div class="lab-card available">
-                        <div class="lab-header">
-                            <div class="lab-name">Lab. Teoría de la Computación</div>
-                            <div class="lab-status status-available">Disponible</div>
+                <div class="labs-grid">
+                    <!-- Teoría de la Computación -->
+                    <div class="lab-card" id="card-tc">
+                        <div class="lab-name">
+                            <i class="fas fa-brain"></i>
+                            Teoría de la Computación
                         </div>
-                        <div class="lab-details">
-                            <div class="detail-item">
-                                <i class="fas fa-user-tie"></i>
-                                <span><strong>Docente:</strong> Ing. Carlos López</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-clock"></i>
-                                <span><strong>Horario:</strong> Lun 08:00-10:00</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-users"></i>
-                                <span><strong>Cupos:</strong> 15/25</span>
-                            </div>
+                        
+                        <div class="select-wrapper">
+                            <label for="select-tc">
+                                <i class="fas fa-list-ul"></i> Selecciona una opción:
+                            </label>
+                            <select id="select-tc" onchange="mostrarDetalles('tc')">
+                                <option value="">-- Seleccione --</option>
+                                <option value="a">Opción A</option>
+                                <option value="b">Opción B</option>
+                            </select>
                         </div>
-                        <button class="btn btn-success" onclick="matricular(1)">
+
+                        <div class="option-details empty" id="details-tc">
+                            Selecciona una opción para ver los detalles
+                        </div>
+
+                        <button class="btn btn-success" id="btn-tc" onclick="matricular('tc')" disabled>
                             <i class="fas fa-plus"></i> Matricular
                         </button>
                     </div>
 
-                    <div class="lab-card available">
-                        <div class="lab-header">
-                            <div class="lab-name">Lab. Sistemas Operativos</div>
-                            <div class="lab-status status-available">Disponible</div>
+                    <!-- Sistemas Operativos -->
+                    <div class="lab-card" id="card-so">
+                        <div class="lab-name">
+                            <i class="fas fa-desktop"></i>
+                            Sistemas Operativos
                         </div>
-                        <div class="lab-details">
-                            <div class="detail-item">
-                                <i class="fas fa-user-tie"></i>
-                                <span><strong>Docente:</strong> Dra. Ana Martínez</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-clock"></i>
-                                <span><strong>Horario:</strong> Mar 10:00-12:00</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-users"></i>
-                                <span><strong>Cupos:</strong> 18/30</span>
-                            </div>
+                        
+                        <div class="select-wrapper">
+                            <label for="select-so">
+                                <i class="fas fa-list-ul"></i> Selecciona una opción:
+                            </label>
+                            <select id="select-so" onchange="mostrarDetalles('so')">
+                                <option value="">-- Seleccione --</option>
+                                <option value="a">Opción A</option>
+                                <option value="b">Opción B</option>
+                            </select>
                         </div>
-                        <button class="btn btn-success" onclick="matricular(2)">
+
+                        <div class="option-details empty" id="details-so">
+                            Selecciona una opción para ver los detalles
+                        </div>
+
+                        <button class="btn btn-success" id="btn-so" onclick="matricular('so')" disabled>
                             <i class="fas fa-plus"></i> Matricular
                         </button>
                     </div>
 
-                    <div class="lab-card available">
-                        <div class="lab-header">
-                            <div class="lab-name">Lab. Base de Datos 1</div>
-                            <div class="lab-status status-available">Disponible</div>
+                    <!-- Base de Datos -->
+                    <div class="lab-card" id="card-bd">
+                        <div class="lab-name">
+                            <i class="fas fa-database"></i>
+                            Base de Datos 1
                         </div>
-                        <div class="lab-details">
-                            <div class="detail-item">
-                                <i class="fas fa-user-tie"></i>
-                                <span><strong>Docente:</strong> Ing. Roberto Silva</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-clock"></i>
-                                <span><strong>Horario:</strong> Mié 14:00-16:00</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-users"></i>
-                                <span><strong>Cupos:</strong> 20/25</span>
-                            </div>
+                        
+                        <div class="select-wrapper">
+                            <label for="select-bd">
+                                <i class="fas fa-list-ul"></i> Selecciona una opción:
+                            </label>
+                            <select id="select-bd" onchange="mostrarDetalles('bd')">
+                                <option value="">-- Seleccione --</option>
+                                <option value="a">Opción A</option>
+                                <option value="b">Opción B</option>
+                            </select>
                         </div>
-                        <button class="btn btn-success" onclick="matricular(3)">
+
+                        <div class="option-details empty" id="details-bd">
+                            Selecciona una opción para ver los detalles
+                        </div>
+
+                        <button class="btn btn-success" id="btn-bd" onclick="matricular('bd')" disabled>
                             <i class="fas fa-plus"></i> Matricular
                         </button>
                     </div>
@@ -384,7 +476,31 @@
     </div>
 
     <script>
-        let laboratoriosMatriculados = [];
+        let laboratoriosMatriculados = {};
+
+        const labInfo = {
+            'tc': {
+                nombre: 'Teoría de la Computación',
+                opciones: {
+                    'a': { docente: 'Ing. Carlos López', horario: 'Lun 08:00-10:00', cupos: '15/25' },
+                    'b': { docente: 'Dr. Miguel Fernández', horario: 'Mié 14:00-16:00', cupos: '18/25' }
+                }
+            },
+            'so': {
+                nombre: 'Sistemas Operativos',
+                opciones: {
+                    'a': { docente: 'Dra. Ana Martínez', horario: 'Mar 10:00-12:00', cupos: '18/30' },
+                    'b': { docente: 'Ing. Pedro Ramírez', horario: 'Jue 16:00-18:00', cupos: '22/30' }
+                }
+            },
+            'bd': {
+                nombre: 'Base de Datos 1',
+                opciones: {
+                    'a': { docente: 'Ing. Roberto Silva', horario: 'Mié 08:00-10:00', cupos: '20/25' },
+                    'b': { docente: 'Dra. Laura Gómez', horario: 'Vie 10:00-12:00', cupos: '16/25' }
+                }
+            }
+        };
 
         document.addEventListener('DOMContentLoaded', function() {
             const userName = localStorage.getItem("estudianteActual") || "Estudiante";
@@ -397,7 +513,6 @@
             const container = document.getElementById('periodo-info-container');
             const contentMatricula = document.getElementById('content-matricula');
             
-            // OCULTAR CONTENIDO POR DEFECTO
             contentMatricula.style.display = 'none';
             
             if (!periodosGuardados) {
@@ -461,33 +576,89 @@
                 </div>
             `;
 
-            // MOSTRAR CONTENIDO SOLO SI HAY PERÍODO ACTIVO
             contentMatricula.style.display = 'block';
         }
 
-        function matricular(labId) {
-            const labNombres = {
-                1: 'Lab. Teoría de la Computación',
-                2: 'Lab. Sistemas Operativos',
-                3: 'Lab. Base de Datos 1'
-            };
+        function mostrarDetalles(curso) {
+            const select = document.getElementById(`select-${curso}`);
+            const detailsDiv = document.getElementById(`details-${curso}`);
+            const btn = document.getElementById(`btn-${curso}`);
+            const opcion = select.value;
 
-            if (laboratoriosMatriculados.includes(labId)) {
-                alert('⚠️ Ya estás matriculado en este laboratorio');
+            if (!opcion) {
+                detailsDiv.className = 'option-details empty';
+                detailsDiv.innerHTML = 'Selecciona una opción para ver los detalles';
+                btn.disabled = true;
                 return;
             }
 
-            if (confirm(`¿Deseas matricularte en ${labNombres[labId]}?`)) {
-                laboratoriosMatriculados.push(labId);
+            const info = labInfo[curso].opciones[opcion];
+            detailsDiv.className = 'option-details';
+            detailsDiv.innerHTML = `
+                <div class="detail-item">
+                    <i class="fas fa-tag"></i>
+                    <strong>Opción ${opcion.toUpperCase()}</strong>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-user-tie"></i>
+                    <strong>Docente:</strong> ${info.docente}
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <strong>Horario:</strong> ${info.horario}
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-users"></i>
+                    <strong>Cupos:</strong> ${info.cupos}
+                </div>
+            `;
+            btn.disabled = false;
+        }
+
+        function matricular(curso) {
+            const select = document.getElementById(`select-${curso}`);
+            const opcion = select.value;
+
+            if (!opcion) {
+                alert('⚠️ Por favor, selecciona una opción primero');
+                return;
+            }
+
+            if (laboratoriosMatriculados[curso]) {
+                alert(`⚠️ Ya estás matriculado en ${labInfo[curso].nombre} - Opción ${laboratoriosMatriculados[curso].opcion.toUpperCase()}`);
+                return;
+            }
+
+            const info = labInfo[curso].opciones[opcion];
+            
+            if (confirm(`¿Deseas matricularte en:\n\n${labInfo[curso].nombre} - Opción ${opcion.toUpperCase()}\nDocente: ${info.docente}\nHorario: ${info.horario}?`)) {
+                laboratoriosMatriculados[curso] = {
+                    nombre: labInfo[curso].nombre,
+                    opcion: opcion,
+                    ...info
+                };
+                
+                actualizarEstadoTarjeta(curso);
                 actualizarMatriculados();
                 alert('✅ ¡Matrícula realizada exitosamente!');
             }
         }
 
+        function actualizarEstadoTarjeta(curso) {
+            const card = document.getElementById(`card-${curso}`);
+            const select = document.getElementById(`select-${curso}`);
+            const btn = document.getElementById(`btn-${curso}`);
+
+            card.classList.add('enrolled');
+            select.disabled = true;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-check"></i> Matriculado';
+        }
+
         function actualizarMatriculados() {
             const container = document.getElementById('enrolledLabs');
             
-            if (laboratoriosMatriculados.length === 0) {
+            if (Object.keys(laboratoriosMatriculados).length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; color: #7f8c8d; padding: 20px;">
                         <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
@@ -497,24 +668,19 @@
                 return;
             }
 
-            const labInfo = {
-                1: { nombre: 'Lab. Teoría de la Computación', docente: 'Ing. Carlos López', horario: 'Lun 08:00-10:00' },
-                2: { nombre: 'Lab. Sistemas Operativos', docente: 'Dra. Ana Martínez', horario: 'Mar 10:00-12:00' },
-                3: { nombre: 'Lab. Base de Datos 1', docente: 'Ing. Roberto Silva', horario: 'Mié 14:00-16:00' }
-            };
-
-            container.innerHTML = laboratoriosMatriculados.map(id => {
-                const lab = labInfo[id];
+            container.innerHTML = Object.keys(laboratoriosMatriculados).map(curso => {
+                const lab = laboratoriosMatriculados[curso];
                 return `
                     <div class="enrollment-item">
                         <div>
-                            <strong>${lab.nombre}</strong>
-                            <div style="font-size: 0.85rem; color: #7f8c8d; margin-top: 5px;">
+                            <strong style="font-size: 1.1rem;">${lab.nombre}</strong>
+                            <span class="option-badge">OPCIÓN ${lab.opcion.toUpperCase()}</span>
+                            <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 8px;">
                                 <i class="fas fa-user-tie"></i> ${lab.docente} • 
                                 <i class="fas fa-clock"></i> ${lab.horario}
                             </div>
                         </div>
-                        <button class="btn btn-danger" onclick="cancelarMatricula(${id})">
+                        <button class="btn btn-danger" onclick="cancelarMatricula('${curso}')">
                             <i class="fas fa-times"></i> Cancelar
                         </button>
                     </div>
@@ -522,9 +688,25 @@
             }).join('');
         }
 
-        function cancelarMatricula(labId) {
-            if (confirm('¿Estás seguro de cancelar esta matrícula?')) {
-                laboratoriosMatriculados = laboratoriosMatriculados.filter(id => id !== labId);
+        function cancelarMatricula(curso) {
+            const lab = laboratoriosMatriculados[curso];
+            if (confirm(`¿Estás seguro de cancelar la matrícula de ${lab.nombre} - Opción ${lab.opcion.toUpperCase()}?`)) {
+                delete laboratoriosMatriculados[curso];
+                
+                // Restaurar estado de la tarjeta
+                const card = document.getElementById(`card-${curso}`);
+                const select = document.getElementById(`select-${curso}`);
+                const btn = document.getElementById(`btn-${curso}`);
+                const details = document.getElementById(`details-${curso}`);
+
+                card.classList.remove('enrolled');
+                select.disabled = false;
+                select.value = '';
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-plus"></i> Matricular';
+                details.className = 'option-details empty';
+                details.innerHTML = 'Selecciona una opción para ver los detalles';
+
                 actualizarMatriculados();
                 alert('✅ Matrícula cancelada exitosamente');
             }
