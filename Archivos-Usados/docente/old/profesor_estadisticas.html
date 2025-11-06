@@ -1,480 +1,453 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Estadísticas - LUMINA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
         :root {
-            --primary: #3498db;
+            /* colores */
+            --bg-1: #667eea;
+            --bg-2: #764ba2;
+            --primary: #2c3e50;
             --secondary: #2c3e50;
             --accent: #9b59b6;
             --success: #2ecc71;
             --warning: #f39c12;
             --danger: #e74c3c;
-            --sidebar-width: 280px;
+
+            /* espaciamientos y tamaños */
+            --sidebar-width: 300px;
+            --page-pad: 40px;
+            --card-pad: 28px;
+            --gap-sm: 16px;
+            --gap-md: 24px;
+            --gap-lg: 32px;
+            --radius: 14px;
+
+            /* sombras */
+            --shadow-sm: 0 6px 16px rgba(22, 28, 37, 0.06);
+            --shadow-lg: 0 14px 40px rgba(22, 28, 37, 0.10);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        /* Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
         body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            color: var(--primary);
             display: flex;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.45;
         }
 
+        /* SIDEBAR */
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(44, 62, 80, 0.95);
-            color: white;
-            height: 100vh;
+            background: linear-gradient(180deg, rgba(44,62,80,0.97), rgba(26,35,44,0.97));
+            color: #fff;
             position: fixed;
-            overflow-y: auto;
-            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+            inset: 0 auto 0 0;
+            padding: calc(var(--page-pad) * 0.6);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-md);
             z-index: 1000;
         }
 
         .logo {
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            background: linear-gradient(45deg, #3498db, #9b59b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .menu-item {
-            padding: 14px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-            text-decoration: none;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
+        .logo i { font-size: 1.5rem; color: var(--accent); }
+        .logo h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: 0.3px; margin: 0; }
 
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
         }
+        .user-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            display:flex;align-items:center;justify-content:center;
+            font-size:1.2rem;
+        }
+        .user-details h3 { font-size: 0.98rem; margin-bottom: 4px; }
+        .user-details p { font-size: 0.82rem; color: rgba(255,255,255,0.75); margin: 0; }
 
+        .menu { display:flex;flex-direction:column; gap:8px; padding-top:6px; }
+        .menu-item {
+            display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;
+            color:#fff;text-decoration:none;font-weight:600;transition:all .14s ease;
+        }
+        .menu-item i { width:22px; text-align:center; }
+        .menu-item:hover { transform:translateY(-3px); background: rgba(255,255,255,0.04); }
+
+        /* MAIN */
         .main-content {
-            flex: 1;
             margin-left: var(--sidebar-width);
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: var(--page-pad);
+            flex: 1;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-lg);
         }
 
         .header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 14px;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            margin-bottom: 6px;
         }
-
         .header h1 {
+            font-size: 1.8rem;
             color: var(--secondary);
-            font-size: 2rem;
+            display:flex;align-items:center;gap:12px;
+            margin: 0;
         }
+        .header h1 i { color: var(--accent); font-size:1.25rem; }
 
+        /* Selector de curso (card) */
         .course-selector {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255,255,255,0.98);
+            border-radius: var(--radius);
+            padding: var(--card-pad);
+            box-shadow: var(--shadow-sm);
         }
-
+        .form-group { margin-bottom: 12px; }
         .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--secondary);
+            display:block;margin-bottom:8px;font-weight:700;color:var(--secondary);
+        }
+        select {
+            width:100%;
+            padding:12px 14px;border-radius:10px;border:1px solid #e7e9ee;
+            font-size:1rem;background: #fff;
         }
 
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+        /* Área de estadísticas */
+        #stats-content { display: none; }
 
-        .stats-grid {
+        .grid {
             display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: var(--gap-lg);
+            align-items: start;
+        }
+
+        /* Cards grandes (avance + attendance) */
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: var(--card-pad);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Avance del temario: más alto, mejor espaciado */
+        .progress-section {
+            display:flex;
+            flex-direction:column;
+            gap: var(--gap-sm);
+            margin-top: 6px;
+        }
+        .progress-item {
+            display:flex;
+            flex-direction:column;
+            gap: 8px;
+            padding: 8px 6px;
+        }
+        .progress-label {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:0.95rem;
+            color: #58606a;
+        }
+        .progress-bar {
+            width:100%;
+            height: 18px;
+            background: #f0f3f6;
+            border-radius: 999px;
+            overflow:hidden;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .progress-fill {
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:0.82rem;
+            font-weight:700;
+            color:#fff;
+            border-radius:999px;
+        }
+        .progress-fill.full { background: linear-gradient(90deg, #3ac371, #27ae60); }
+        .progress-fill.mid  { background: linear-gradient(90deg,#4aa3e0,#7b6be6); }
+        .progress-fill.low  { background: linear-gradient(90deg,#f3b03e,#f39c12); }
+
+        /* Grid de unidades: mayor gap y cards más aireadas */
+        .stats-grid {
+            display:grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: var(--gap-md);
+            margin-top: 6px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display:flex;
+            flex-direction:column;
+            gap: 14px;
         }
 
         .stat-card h3 {
-            color: var(--secondary);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .progress-section {
-            margin-bottom: 25px;
-        }
-
-        .progress-item {
-            margin-bottom: 15px;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #ecf0f1;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 10px;
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.8rem;
+            margin:0;
+            font-size:1.02rem;
+            color:var(--secondary);
+            display:flex;align-items:center;gap:10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.04);
+            padding-bottom:8px;
         }
 
         .unit-stats {
-            background: #f8f9fa;
-            padding: 20px;
+            background: #fbfcfe;
+            padding: 12px;
             border-radius: 10px;
-            margin-bottom: 20px;
+            display:flex;
+            flex-direction:column;
+            gap:8px;
         }
-
-        .unit-title {
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
+        .unit-title { font-weight:700; color:var(--secondary); margin-bottom:6px; }
 
         .stat-row {
-            display: flex;
-            justify-content: space-between;
+            display:flex;
+            justify-content:space-between;
+            gap: 12px;
             padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
         }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-label { color: #6c7782; font-size:0.95rem; }
+        .stat-value { font-weight:700; color:var(--secondary); }
 
-        .stat-row:last-child {
-            border-bottom: none;
-        }
+        .stat-value.high { color: var(--success); }
+        .stat-value.low  { color: var(--danger); }
 
-        .stat-label {
-            color: #7f8c8d;
-        }
-
-        .stat-value {
-            font-weight: 600;
-            color: var(--secondary);
-        }
-
-        .stat-value.high {
-            color: var(--success);
-        }
-
-        .stat-value.low {
-            color: var(--danger);
-        }
-
-        .attendance-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-
+        /* Attendance card: más grande y más separación */
+        .attendance-card { margin-top: 0; }
         .attendance-bar {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            display:flex;
+            gap:18px;
+            align-items:center;
         }
-
         .attendance-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
+            width:68px; height:68px; border-radius:14px;
+            display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;
         }
+        .attendance-icon.high { background: linear-gradient(90deg,#2ecc71,#27ae60); }
+        .attendance-icon.medium { background: linear-gradient(90deg,#f39c12,#f1c40f); }
+        .attendance-icon.low { background: linear-gradient(90deg,#e74c3c,#c0392b); }
 
-        .attendance-icon.high {
-            background: var(--success);
+        .attendance-info { display:flex;flex-direction:column;gap:6px; }
+        .attendance-percentage { font-size:2.25rem; font-weight:800; color:var(--secondary); }
+        .attendance-label { color:#6c7782; font-size:0.95rem; }
+
+        /* Responsive adjustments */
+        @media (max-width:1100px) {
+            .grid { grid-template-columns: 1fr; }
+            .main-content { padding: 28px; }
         }
-
-        .attendance-icon.medium {
-            background: var(--warning);
-        }
-
-        .attendance-icon.low {
-            background: var(--danger);
-        }
-
-        .attendance-info {
-            flex: 1;
-        }
-
-        .attendance-percentage {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        .attendance-label {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+        @media (max-width:760px) {
+            .sidebar { position: relative; width:100%; height:auto; padding: 14px; display:flex; flex-direction:row; align-items:center; gap:12px; }
+            .logo h1 { display:none; }
+            .main-content { margin-left:0; padding: 18px; }
+            .user-info { display:none; }
+            .page-wrapper { gap: 20px; }
+            .attendance-icon { width:56px; height:56px; border-radius:12px; }
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <aside class="sidebar" aria-label="Barra lateral">
         <div class="logo">
+            <i class="fas fa-university" aria-hidden="true"></i>
             <h1>LUMINA PROFESOR</h1>
         </div>
-        <div class="user-info">
-            <h3 id="profesor-name">Profesor</h3>
-        </div>
-        <div class="menu">
-            <a href="nuevo_profesor.html" class="menu-item">
-                <i class="fas fa-arrow-left"></i>
-                <span>Volver al Panel</span>
-            </a>
-        </div>
-    </div>
 
-    <div class="main-content">
-        <div class="header">
-            <h1><i class="fas fa-chart-line"></i> Estadísticas del Curso</h1>
-        </div>
-
-        <div class="course-selector">
-            <div class="form-group">
-                <label><i class="fas fa-book"></i> Seleccionar Curso</label>
-                <select id="select-course" onchange="cargarEstadisticas()">
-                    <option value="">-- Seleccione un curso --</option>
-                    <option value="MAT101">MAT101 - Matemática Aplicada</option>
-                    <option value="CC201">CC201 - Ciencia de la Computación I</option>
-                    <option value="FIS201">FIS201 - Física I</option>
-                </select>
+        <div class="user-info" role="group" aria-label="Información del profesor">
+            <div class="user-avatar" aria-hidden="true"><i class="fas fa-user-tie"></i></div>
+            <div class="user-details">
+                <h3 id="profesor-name">Profesor</h3>
+                <p id="profesor-rol">Docente</p>
             </div>
         </div>
 
-        <div id="stats-content" style="display: none;">
-            <!-- Avance del Temario -->
-            <div class="stat-card">
-                <h3><i class="fas fa-tasks"></i> Avance del Temario</h3>
-                <div class="progress-section">
-                    <div class="progress-item">
-                        <div class="progress-label">
-                            <span>Unidad 1: Fundamentos</span>
-                            <span><strong>100%</strong></span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 100%;">Completado</div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-label">
-                            <span>Unidad 2: Aplicaciones</span>
-                            <span><strong>75%</strong></span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 75%;">En progreso</div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-label">
-                            <span>Unidad 3: Análisis Avanzado</span>
-                            <span><strong>30%</strong></span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 30%;">Iniciando</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <nav class="menu" aria-label="Menú principal">
+            <a class="menu-item" href="nuevo_profesor.html"><i class="fas fa-arrow-left"></i><span>Volver al Panel</span></a>
+        </nav>
+    </aside>
 
-            <div class="stats-grid">
-                <!-- Unidad 1 -->
-                <div class="stat-card">
-                    <h3><i class="fas fa-book-open"></i> Unidad 1: Evaluaciones</h3>
-                    <div class="unit-stats">
-                        <div class="unit-title">Continua 1</div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Alta:</span>
-                            <span class="stat-value high">18.5</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Baja:</span>
-                            <span class="stat-value low">8.0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Promedio:</span>
-                            <span class="stat-value">14.2</span>
-                        </div>
-                    </div>
-                    <div class="unit-stats">
-                        <div class="unit-title">Parcial 1</div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Alta:</span>
-                            <span class="stat-value high">19.0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Baja:</span>
-                            <span class="stat-value low">7.5</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Promedio:</span>
-                            <span class="stat-value">13.8</span>
-                        </div>
-                    </div>
-                </div>
+    <main class="main-content" role="main">
+        <div class="page-wrapper">
+            <header class="header">
+                <h1><i class="fas fa-chart-line"></i> Estadísticas del Curso</h1>
+            </header>
 
-                <!-- Unidad 2 -->
-                <div class="stat-card">
-                    <h3><i class="fas fa-book-open"></i> Unidad 2: Evaluaciones</h3>
-                    <div class="unit-stats">
-                        <div class="unit-title">Continua 2</div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Alta:</span>
-                            <span class="stat-value high">17.5</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Baja:</span>
-                            <span class="stat-value low">9.0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Promedio:</span>
-                            <span class="stat-value">14.5</span>
-                        </div>
-                    </div>
-                    <div class="unit-stats">
-                        <div class="unit-title">Parcial 2</div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Alta:</span>
-                            <span class="stat-value high">18.0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Baja:</span>
-                            <span class="stat-value low">8.5</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Promedio:</span>
-                            <span class="stat-value">14.0</span>
-                        </div>
-                    </div>
+            <section class="course-selector card" aria-labelledby="sel-curso">
+                <label id="sel-curso" style="display:block;font-weight:700;margin-bottom:10px;color:var(--secondary)"><i class="fas fa-book"></i> Seleccionar Curso</label>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                    <select id="select-course" onchange="cargarEstadisticas()" style="flex:1;min-width:220px;padding:12px;border-radius:10px;border:1px solid #e7e9ee;">
+                        <option value="">-- Seleccione un curso --</option>
+                        <option value="MAT101">MAT101 - Matemática Aplicada</option>
+                        <option value="CC201">CC201 - Ciencia de la Computación I</option>
+                        <option value="FIS201">FIS201 - Física I</option>
+                    </select>
+                    <button onclick="document.getElementById('select-course').value ? cargarEstadisticas() : alert('Seleccione un curso')" style="padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#6aa8d9);color:#fff;font-weight:700;cursor:pointer">Cargar</button>
                 </div>
+            </section>
 
-                <!-- Unidad 3 -->
-                <div class="stat-card">
-                    <h3><i class="fas fa-book-open"></i> Unidad 3: Evaluaciones</h3>
-                    <div class="unit-stats">
-                        <div class="unit-title">Continua 3</div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Alta:</span>
-                            <span class="stat-value high">16.5</span>
+            <section id="stats-content" aria-live="polite">
+                <!-- layout: left = main stats, right = resumen / asistencia -->
+                <div class="grid">
+                    <div style="display:flex;flex-direction:column;gap:var(--gap-md)">
+                        <!-- Avance del temario -->
+                        <div class="card">
+                            <h3 style="margin:0 0 8px 0; font-size:1.05rem; color:var(--secondary)"><i class="fas fa-tasks"></i> Avance del Temario</h3>
+                            <div class="progress-section">
+                                <div class="progress-item">
+                                    <div class="progress-label"><span>Unidad 1: Fundamentos</span><span><strong>100%</strong></span></div>
+                                    <div class="progress-bar"><div class="progress-fill full" style="width:100%">Completado</div></div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-label"><span>Unidad 2: Aplicaciones</span><span><strong>75%</strong></span></div>
+                                    <div class="progress-bar"><div class="progress-fill mid" style="width:75%">En progreso</div></div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-label"><span>Unidad 3: Análisis Avanzado</span><span><strong>30%</strong></span></div>
+                                    <div class="progress-bar"><div class="progress-fill low" style="width:30%">Iniciando</div></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Baja:</span>
-                            <span class="stat-value low">10.0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Promedio:</span>
-                            <span class="stat-value">13.5</span>
-                        </div>
-                    </div>
-                    <div class="unit-stats">
-                        <div class="unit-title">Parcial 3</div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Alta:</span>
-                            <span class="stat-value">-</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Nota Más Baja:</span>
-                            <span class="stat-value">-</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Promedio:</span>
-                            <span class="stat-value">Pendiente</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Asistencia por Curso -->
-            <div class="attendance-card">
-                <h3><i class="fas fa-user-check"></i> Asistencia del Curso</h3>
-                <div class="attendance-bar">
-                    <div class="attendance-icon high">
-                        <i class="fas fa-check"></i>
+                        <!-- Grid con unidades/evaluaciones -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3><i class="fas fa-book-open"></i> Unidad 1: Evaluaciones</h3>
+                                <div class="unit-stats">
+                                    <div class="unit-title">Continua 1</div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Alta:</span><span class="stat-value high">18.5</span></div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Baja:</span><span class="stat-value low">8.0</span></div>
+                                    <div class="stat-row"><span class="stat-label">Promedio:</span><span class="stat-value">14.2</span></div>
+                                </div>
+
+                                <div class="unit-stats" style="margin-top:10px">
+                                    <div class="unit-title">Parcial 1</div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Alta:</span><span class="stat-value high">19.0</span></div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Baja:</span><span class="stat-value low">7.5</span></div>
+                                    <div class="stat-row"><span class="stat-label">Promedio:</span><span class="stat-value">13.8</span></div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <h3><i class="fas fa-book-open"></i> Unidad 2: Evaluaciones</h3>
+                                <div class="unit-stats">
+                                    <div class="unit-title">Continua 2</div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Alta:</span><span class="stat-value high">17.5</span></div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Baja:</span><span class="stat-value low">9.0</span></div>
+                                    <div class="stat-row"><span class="stat-label">Promedio:</span><span class="stat-value">14.5</span></div>
+                                </div>
+
+                                <div class="unit-stats" style="margin-top:10px">
+                                    <div class="unit-title">Parcial 2</div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Alta:</span><span class="stat-value high">18.0</span></div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Baja:</span><span class="stat-value low">8.5</span></div>
+                                    <div class="stat-row"><span class="stat-label">Promedio:</span><span class="stat-value">14.0</span></div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <h3><i class="fas fa-book-open"></i> Unidad 3: Evaluaciones</h3>
+                                <div class="unit-stats">
+                                    <div class="unit-title">Continua 3</div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Alta:</span><span class="stat-value high">16.5</span></div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Baja:</span><span class="stat-value low">10.0</span></div>
+                                    <div class="stat-row"><span class="stat-label">Promedio:</span><span class="stat-value">13.5</span></div>
+                                </div>
+
+                                <div class="unit-stats" style="margin-top:10px">
+                                    <div class="unit-title">Parcial 3</div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Alta:</span><span class="stat-value">-</span></div>
+                                    <div class="stat-row"><span class="stat-label">Nota Más Baja:</span><span class="stat-value">-</span></div>
+                                    <div class="stat-row"><span class="stat-label">Promedio:</span><span class="stat-value">Pendiente</span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="attendance-info">
-                        <div class="attendance-percentage">87.5%</div>
-                        <div class="attendance-label">Asistencia Promedio del Curso</div>
-                    </div>
+
+                    <!-- Resumen / Asistencia (columna derecha) -->
+                    <aside style="display:flex;flex-direction:column;gap:var(--gap-md)">
+                        <div class="card attendance-card">
+                            <h3 style="margin:0 0 8px 0; font-size:1.05rem; color:var(--secondary)"><i class="fas fa-user-check"></i> Asistencia del Curso</h3>
+
+                            <div class="attendance-bar" style="margin-top:6px;">
+                                <div class="attendance-icon high"><i class="fas fa-check"></i></div>
+                                <div class="attendance-info">
+                                    <div class="attendance-percentage">87.5%</div>
+                                    <div class="attendance-label">Asistencia Promedio del Curso</div>
+                                </div>
+                            </div>
+
+                            <div class="unit-stats" style="margin-top:12px">
+                                <div class="stat-row"><span class="stat-label">Total de Clases:</span><span class="stat-value">32</span></div>
+                                <div class="stat-row"><span class="stat-label">Estudiantes con &gt; 90%:</span><span class="stat-value high">15 (50%)</span></div>
+                                <div class="stat-row"><span class="stat-label">Estudiantes 70–90%:</span><span class="stat-value">12 (40%)</span></div>
+                                <div class="stat-row"><span class="stat-label">Estudiantes &lt; 70%:</span><span class="stat-value low">3 (10%)</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Aquí podrías agregar cards de KPIs / quick-stats -->
+                        <div class="card">
+                            <h3 style="margin:0 0 8px 0; font-size:1.05rem; color:var(--secondary)"><i class="fas fa-chart-pie"></i> Indicadores rápidos</h3>
+                            <div style="display:flex;flex-direction:column;gap:12px">
+                                <div style="display:flex;justify-content:space-between;align-items:center">
+                                    <div style="color:#6c7782">Promedio General</div>
+                                    <div style="font-weight:800;color:var(--secondary)">14.1</div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center">
+                                    <div style="color:#6c7782">Aprobación</div>
+                                    <div style="font-weight:800;color:var(--success)">68%</div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center">
+                                    <div style="color:#6c7782">Desaprobados</div>
+                                    <div style="font-weight:800;color:var(--danger)">12</div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
-                <div class="unit-stats">
-                    <div class="stat-row">
-                        <span class="stat-label">Total de Clases:</span>
-                        <span class="stat-value">32</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Estudiantes con > 90% asistencia:</span>
-                        <span class="stat-value high">15 (50%)</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Estudiantes con 70-90% asistencia:</span>
-                        <span class="stat-value">12 (40%)</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Estudiantes con < 70% asistencia:</span>
-                        <span class="stat-value low">3 (10%)</span>
-                    </div>
-                </div>
-            </div>
+            </section>
         </div>
-    </div>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -484,10 +457,12 @@
 
         function cargarEstadisticas() {
             const curso = document.getElementById('select-course').value;
+            const stats = document.getElementById('stats-content');
             if (curso) {
-                document.getElementById('stats-content').style.display = 'block';
+                stats.style.display = 'block';
+                // podrías cargar datos reales por fetch aquí
             } else {
-                document.getElementById('stats-content').style.display = 'none';
+                stats.style.display = 'none';
             }
         }
     </script>
